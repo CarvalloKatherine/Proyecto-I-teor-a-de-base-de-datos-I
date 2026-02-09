@@ -1,0 +1,156 @@
+Table Usuario {
+  id_usuario varchar(30) [primary key]
+  primer_nombre varchar(300)
+  segundo_nombre varchar(300)
+  primer_apellido varchar(300)
+  segundo_apellido varchar(300)
+  correo_electronico varchar(300)
+  fecha_registro varchar(300)
+  salario_mensual_base double 
+  estado bool
+  creado_por varchar(300)
+  creado_en varchar(300)
+  modificado_por varchar(300)
+  modificado_en varchar(300)
+}
+
+Table Presupuesto {
+  id_presupuesto varchar(30) [primary key]
+  id_usuario varchar(30)
+  usuario varchar(300)
+  nombre_descriptivo varchar(300)
+  anio_inicio int 
+  mes_inicio int 
+  anio_fin int 
+  mes_fin int 
+  total_ingresos double 
+  total_gastos double 
+  total_ahorro double 
+  fecha_hora_creacion varchar(300)
+  estado_presupuesto varchar(300)
+  creado_por varchar(300)
+  creado_en varchar(300)
+  modificado_por varchar(300)
+  modificado_en varchar(300)
+}
+
+
+Table Categoria{
+  id_categoria varchar(30) [primary key]
+  id_usuario varchar(30) 
+  nombre_categoria varchar(30)
+  descripcion_detallada varchar(30)
+  tipo_categoria varchar(30)
+  nombre_icono varchar(30)
+  color_hex varchar(30)
+  orden_presentacion varchar(30)
+  creado_por varchar(300)
+  creado_en varchar(300)
+  modificado_por varchar(300)
+  modificado_en varchar(300)
+
+}
+
+Table SubCategoria{
+  id_subcategoria varchar(30) [primary key]
+  id_categoria varchar(30) 
+  categoria_padre varchar(30)
+  nombre_subcategoria varchar(30)
+  descripcion_detallada_sub varchar(30)
+  estado_sub bool
+  por_defecto bool 
+  
+
+  creado_por varchar(300)
+  creado_en varchar(300)
+  modificado_por varchar(300)
+  modificado_en varchar(300)
+
+}
+
+Table presupuesto_detalle{
+  id_presupuesto_detalle varchar(30) [primary key]
+  id_presupuesto varchar(30)
+  id_subcategoria varchar(30)
+  presupuesto_padre varchar(30)
+  subcategoria varchar(30)
+  monto_mensual_asignado double
+  observaciones  varchar(100)
+  
+
+  creado_por varchar(300)
+  creado_en varchar(300)
+  modificado_por varchar(300)
+  modificado_en varchar(300)
+
+}
+
+
+Table obligacion_fija{
+  id_obligacion varchar(30) [primary key]
+  id_usuario varchar(30)
+  id_subcategoria varchar(30) 
+  usuario varchar(30)
+  subcategoria varchar(30)
+  nombre_obligacion double
+  descripcion  varchar(100)
+  monto_fijo_mensual double
+  dia int
+  vigente bool
+  fecha_inicio varchar (30)
+  fecha_fin varchar (30)
+  
+  creado_por varchar(300)
+  creado_en varchar(300)
+  modificado_por varchar(300)
+  modificado_en varchar(300)
+
+}
+
+
+Table transaccion{
+  id_transaccion varchar(30) [primary key]
+  id_usuario varchar(30)
+  id_subcategoria varchar(30) 
+  id_presupuesto varchar(30)
+  usuario varchar(30)
+  presupuesto double
+  anio int
+  mes int
+  subcategoria varchar(30)
+  obligacion varchar(30)
+  tipo_transaccion varchar(30)
+  descripcion varchar (100)
+  monto double
+  fecha varchar(30)
+  metodo_pago varchar(30)
+  num_factura int
+  observaciones varchar(100)
+  fecha_hora_registro varchar(50)
+  
+  creado_por varchar(300)
+  creado_en varchar(300)
+  modificado_por varchar(300)
+  modificado_en varchar(300)
+
+}
+
+Ref: "Usuario"."id_usuario" < "Categoria"."id_usuario"
+
+Ref: "Usuario"."id_usuario" < "Presupuesto"."id_usuario"
+
+Ref: "Usuario"."id_usuario" < "transaccion"."id_usuario"
+
+Ref: "Usuario"."id_usuario" < "obligacion_fija"."id_obligacion"
+
+Ref: "Categoria"."id_categoria" < "SubCategoria"."id_categoria"
+
+Ref: "Presupuesto"."id_presupuesto" < "presupuesto_detalle"."id_presupuesto"
+
+Ref: "SubCategoria"."id_subcategoria" < "presupuesto_detalle"."id_subcategoria"
+
+Ref: "SubCategoria"."id_subcategoria" < "transaccion"."id_subcategoria"
+
+Ref: "SubCategoria"."id_subcategoria" < "obligacion_fija"."id_subcategoria"
+
+Ref: "Presupuesto"."id_presupuesto" < "transaccion"."id_presupuesto"
