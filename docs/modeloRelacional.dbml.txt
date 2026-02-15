@@ -37,7 +37,6 @@ Table Presupuesto {
 
 Table Categoria{
   id_categoria varchar(30) [primary key]
-  id_usuario varchar(30) 
   nombre_categoria varchar(30)
   descripcion_detallada varchar(30)
   tipo_categoria varchar(30)
@@ -53,7 +52,7 @@ Table Categoria{
 
 Table SubCategoria{
   id_subcategoria varchar(30) [primary key]
-  id_categoria varchar(30) 
+  id_categoria varchar(30)
   categoria_padre varchar(30)
   nombre_subcategoria varchar(30)
   descripcion_detallada_sub varchar(30)
@@ -88,8 +87,7 @@ Table presupuesto_detalle{
 
 Table obligacion_fija{
   id_obligacion varchar(30) [primary key]
-  id_usuario varchar(30)
-  id_subcategoria varchar(30) 
+  id_subcategoria varchar(30)
   usuario varchar(30)
   subcategoria varchar(30)
   nombre_obligacion double
@@ -107,12 +105,15 @@ Table obligacion_fija{
 
 }
 
+Table obligacion_transaccion{
+  id_transaccion varchar(30) [primary key]
+  id_obligacion varchar(30) 
+}
+
 
 Table transaccion{
   id_transaccion varchar(30) [primary key]
-  id_usuario varchar(30)
-  id_subcategoria varchar(30) 
-  id_presupuesto varchar(30)
+  id_presupuesto_detalle varchar(30)
   usuario varchar(30)
   presupuesto double
   anio int
@@ -135,22 +136,20 @@ Table transaccion{
 
 }
 
-Ref: "Usuario"."id_usuario" < "Categoria"."id_usuario"
+
 
 Ref: "Usuario"."id_usuario" < "Presupuesto"."id_usuario"
 
-Ref: "Usuario"."id_usuario" < "transaccion"."id_usuario"
-
-Ref: "Usuario"."id_usuario" < "obligacion_fija"."id_obligacion"
-
-Ref: "Categoria"."id_categoria" < "SubCategoria"."id_categoria"
+Ref: "SubCategoria"."id_categoria" < "Categoria"."id_categoria"
 
 Ref: "Presupuesto"."id_presupuesto" < "presupuesto_detalle"."id_presupuesto"
 
 Ref: "SubCategoria"."id_subcategoria" < "presupuesto_detalle"."id_subcategoria"
 
-Ref: "SubCategoria"."id_subcategoria" < "transaccion"."id_subcategoria"
+Ref: "presupuesto_detalle"."id_subcategoria" < "obligacion_fija"."id_subcategoria"
 
-Ref: "SubCategoria"."id_subcategoria" < "obligacion_fija"."id_subcategoria"
+Ref: "obligacion_fija"."id_obligacion" < "obligacion_transaccion"."id_obligacion"
 
-Ref: "Presupuesto"."id_presupuesto" < "transaccion"."id_presupuesto"
+Ref: "transaccion"."id_transaccion" < "obligacion_transaccion"."id_transaccion"
+
+Ref: "presupuesto_detalle"."id_presupuesto" < "transaccion"."id_presupuesto_detalle"
