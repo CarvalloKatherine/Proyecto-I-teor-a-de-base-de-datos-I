@@ -1,0 +1,160 @@
+CREATE TABLE "Usuario" (
+  "id_usuario" varchar(30) PRIMARY KEY,
+  "primer_nombre" varchar(300),
+  "segundo_nombre" varchar(300),
+  "primer_apellido" varchar(300),
+  "segundo_apellido" varchar(300),
+  "correo_electronico" varchar(300),
+  "fecha_registro" DATE,
+  "salario_mensual_base" DOUBLE,
+  "estado" BIT,
+  "creado_por" varchar(300),
+  "creado_en" TIMESTAMP,
+  "modificado_por" varchar(300),
+  "modificado_en" TIMESTAMP
+);
+
+CREATE TABLE "Presupuesto" (
+  "id_presupuesto" varchar(30) PRIMARY KEY,
+  "id_usuario" varchar(30),
+  "usuario" varchar(300),
+  "nombre_descriptivo" varchar(300),
+  "anio_inicio" int,
+  "mes_inicio" int,
+  "anio_fin" int,
+  "mes_fin" int,
+  "total_ingresos" DOUBLE,
+  "total_gastos" DOUBLE,
+  "total_ahorro" DOUBLE,
+  "fecha_hora_creacion" TIMESTAMP,
+  "estado_presupuesto" varchar(300),
+  "creado_por" varchar(300),
+  "creado_en" TIMESTAMP,
+  "modificado_por" varchar(300),
+  "modificado_en" TIMESTAMP
+);
+
+CREATE TABLE "Categoria" (
+  "id_categoria" varchar(30) PRIMARY KEY,
+  "nombre_categoria" varchar(30),
+  "descripcion_detallada" varchar(30),
+  "tipo_categoria" varchar(30),
+  "nombre_icono" varchar(30),
+  "color_hex" varchar(30),
+  "orden_presentacion" varchar(30),
+  "creado_por" varchar(300),
+  "creado_en" TIMESTAMP,
+  "modificado_por" varchar(300),
+  "modificado_en" TIMESTAMP
+);
+
+CREATE TABLE "SubCategoria" (
+  "id_subcategoria" varchar(30) PRIMARY KEY,
+  "id_categoria" varchar(30),
+  "categoria_padre" varchar(30),
+  "nombre_subcategoria" varchar(30),
+  "descripcion_detallada_sub" varchar(30),
+  "estado_sub" BIT,
+  "por_defecto" BIT,
+  "creado_por" varchar(300),
+  "creado_en" TIMESTAMP,
+  "modificado_por" varchar(300),
+  "modificado_en" TIMESTAMP
+);
+
+CREATE TABLE "presupuesto_detalle" (
+  "id_presupuesto_detalle" varchar(30) PRIMARY KEY,
+  "id_presupuesto" varchar(30),
+  "id_subcategoria" varchar(30),
+  "presupuesto_padre" varchar(30),
+  "subcategoria" varchar(30),
+  "monto_mensual_asignado" DOUBLE,
+  "observaciones" varchar(100),
+  "creado_por" varchar(300),
+  "creado_en" TIMESTAMP,
+  "modificado_por" varchar(300),
+  "modificado_en" TIMESTAMP
+);
+
+CREATE TABLE "obligacion_fija" (
+  "id_obligacion" varchar(30) PRIMARY KEY,
+  "id_subcategoria" varchar(30),
+  "usuario" varchar(30),
+  "subcategoria" varchar(30),
+  "nombre_obligacion" varchar(300),
+  "descripcion" varchar(100),
+  "monto_fijo_mensual" DOUBLE,
+  "dia" int,
+  "vigente" BIT,
+  "fecha_inicio" DATE,
+  "fecha_fin" DATE,
+  "creado_por" varchar(300),
+  "creado_en" TIMESTAMP,
+  "modificado_por" varchar(300),
+  "modificado_en" TIMESTAMP
+);
+
+CREATE TABLE "obligacion_transaccion" (
+  "id_transaccion" varchar(30),
+  "id_obligacion" varchar(30),
+  PRIMARY KEY ("id_transaccion","id_obligacion")
+);
+
+CREATE TABLE "transaccion" (
+  "id_transaccion" varchar(30) PRIMARY KEY,
+  "id_presupuesto_detalle" varchar(30),
+  "usuario" varchar(30),
+  "presupuesto" DOUBLE,
+  "anio" int,
+  "mes" int,
+  "subcategoria" varchar(30),
+  "obligacion" varchar(30),
+  "tipo_transaccion" varchar(30),
+  "descripcion" varchar(100),
+  "monto" DOUBLE,
+  "fecha" DATE,
+  "metodo_pago" varchar(30),
+  "num_factura" int,
+  "observaciones" varchar(100),
+  "fecha_hora_registro" TIMESTAMP,
+  "creado_por" varchar(300),
+  "creado_en" TIMESTAMP,
+  "modificado_por" varchar(300),
+  "modificado_en" TIMESTAMP
+);
+
+
+
+ALTER TABLE "Presupuesto"
+ADD FOREIGN KEY ("id_usuario")
+REFERENCES "Usuario" ("id_usuario");
+
+
+ALTER TABLE "SubCategoria"
+ADD FOREIGN KEY ("id_categoria")
+REFERENCES "Categoria" ("id_categoria");
+
+ALTER TABLE "presupuesto_detalle"
+ADD FOREIGN KEY ("id_presupuesto")
+REFERENCES "Presupuesto" ("id_presupuesto");
+
+ALTER TABLE "presupuesto_detalle"
+ADD FOREIGN KEY ("id_subcategoria")
+REFERENCES "SubCategoria" ("id_subcategoria");
+
+
+ALTER TABLE "obligacion_fija"
+ADD FOREIGN KEY ("id_subcategoria")
+REFERENCES "SubCategoria" ("id_subcategoria");
+
+ALTER TABLE "obligacion_transaccion"
+ADD FOREIGN KEY ("id_obligacion")
+REFERENCES "obligacion_fija" ("id_obligacion");
+
+ALTER TABLE "obligacion_transaccion"
+ADD FOREIGN KEY ("id_transaccion")
+REFERENCES "transaccion" ("id_transaccion");
+
+ALTER TABLE "transaccion"
+ADD FOREIGN KEY ("id_presupuesto_detalle")
+REFERENCES "presupuesto_detalle" ("id_presupuesto_detalle");
