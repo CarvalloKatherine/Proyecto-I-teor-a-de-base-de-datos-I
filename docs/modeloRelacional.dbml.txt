@@ -1,17 +1,18 @@
 Table Usuario {
   id_usuario varchar(30) [primary key]
+  clave varchar(30) 
   primer_nombre varchar(300)
   segundo_nombre varchar(300)
   primer_apellido varchar(300)
   segundo_apellido varchar(300)
   correo_electronico varchar(300)
-  fecha_registro varchar(300)
+  fecha_registro DATE 
   salario_mensual_base double 
   estado bool
   creado_por varchar(300)
-  creado_en varchar(300)
+  creado_en TIMESTAMP 
   modificado_por varchar(300)
-  modificado_en varchar(300)
+  modificado_en TIMESTAMP 
 }
 
 Table Presupuesto {
@@ -26,12 +27,12 @@ Table Presupuesto {
   total_ingresos double 
   total_gastos double 
   total_ahorro double 
-  fecha_hora_creacion varchar(300)
+  fecha_hora_creacion TIMESTAMP 
   estado_presupuesto varchar(300)
   creado_por varchar(300)
-  creado_en varchar(300)
+  creado_en TIMESTAMP 
   modificado_por varchar(300)
-  modificado_en varchar(300)
+  modificado_en TIMESTAMP 
 }
 
 
@@ -61,9 +62,9 @@ Table SubCategoria{
   
 
   creado_por varchar(300)
-  creado_en varchar(300)
+  creado_en TIMESTAMP 
   modificado_por varchar(300)
-  modificado_en varchar(300)
+  modificado_en TIMESTAMP 
 
 }
 
@@ -78,9 +79,9 @@ Table presupuesto_detalle{
   
 
   creado_por varchar(300)
-  creado_en varchar(300)
+  creado_en TIMESTAMP 
   modificado_por varchar(300)
-  modificado_en varchar(300)
+  modificado_en TIMESTAMP 
 
 }
 
@@ -90,18 +91,18 @@ Table obligacion_fija{
   id_subcategoria varchar(30)
   usuario varchar(30)
   subcategoria varchar(30)
-  nombre_obligacion double
+  nombre_obligacion VARCHAR(300)
   descripcion  varchar(100)
   monto_fijo_mensual double
   dia int
   vigente bool
-  fecha_inicio varchar (30)
-  fecha_fin varchar (30)
+  fecha_inicio DATE 
+  fecha_fin DATE 
   
   creado_por varchar(300)
-  creado_en varchar(300)
+  creado_en TIMESTAMP 
   modificado_por varchar(300)
-  modificado_en varchar(300)
+  modificado_en TIMESTAMP 
 
 }
 
@@ -127,20 +128,18 @@ Table transaccion{
   metodo_pago varchar(30)
   num_factura int
   observaciones varchar(100)
-  fecha_hora_registro varchar(50)
+  fecha_hora_registro TIMESTAMP 
   
   creado_por varchar(300)
-  creado_en varchar(300)
+  creado_en TIMESTAMP 
   modificado_por varchar(300)
-  modificado_en varchar(300)
+  modificado_en TIMESTAMP 
 
 }
 
 
 
 Ref: "Usuario"."id_usuario" < "Presupuesto"."id_usuario"
-
-Ref: "SubCategoria"."id_categoria" < "Categoria"."id_categoria"
 
 Ref: "Presupuesto"."id_presupuesto" < "presupuesto_detalle"."id_presupuesto"
 
@@ -153,3 +152,5 @@ Ref: "obligacion_fija"."id_obligacion" < "obligacion_transaccion"."id_obligacion
 Ref: "transaccion"."id_transaccion" < "obligacion_transaccion"."id_transaccion"
 
 Ref: "presupuesto_detalle"."id_presupuesto" < "transaccion"."id_presupuesto_detalle"
+
+Ref: "Categoria"."id_categoria" < "SubCategoria"."id_categoria"
