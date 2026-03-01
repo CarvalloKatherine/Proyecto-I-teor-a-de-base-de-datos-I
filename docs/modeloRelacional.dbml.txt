@@ -1,25 +1,25 @@
 Table Usuario {
   id_usuario varchar(30) [primary key]
   clave varchar(30) 
-  primer_nombre varchar(300)
-  segundo_nombre varchar(300)
-  primer_apellido varchar(300)
-  segundo_apellido varchar(300)
-  correo_electronico varchar(300)
+  primer_nombre varchar(100)
+  segundo_nombre varchar(310)
+  primer_apellido varchar(100)
+  segundo_apellido varchar(100)
+  correo_electronico varchar(200) Unique
   fecha_registro DATE 
   salario_mensual_base double 
   estado bool
-  creado_por varchar(300)
+  creado_por varchar(200)
   creado_en TIMESTAMP 
-  modificado_por varchar(300)
+  modificado_por varchar(200)
   modificado_en TIMESTAMP 
 }
 
 Table Presupuesto {
   id_presupuesto varchar(30) [primary key]
   id_usuario varchar(30)
-  usuario varchar(300)
-  nombre_descriptivo varchar(300)
+  usuario varchar(200)
+  nombre_descriptivo varchar(100)
   anio_inicio int 
   mes_inicio int 
   anio_fin int 
@@ -28,10 +28,10 @@ Table Presupuesto {
   total_gastos double 
   total_ahorro double 
   fecha_hora_creacion TIMESTAMP 
-  estado_presupuesto varchar(300)
-  creado_por varchar(300)
+  estado_presupuesto varchar(30)
+  creado_por varchar(200)
   creado_en TIMESTAMP 
-  modificado_por varchar(300)
+  modificado_por varchar(200)
   modificado_en TIMESTAMP 
 }
 
@@ -39,15 +39,15 @@ Table Presupuesto {
 Table Categoria{
   id_categoria varchar(30) [primary key]
   nombre_categoria varchar(30)
-  descripcion_detallada varchar(30)
+  descripcion_detallada varchar(300)
   tipo_categoria varchar(30)
   nombre_icono varchar(30)
   color_hex varchar(30)
   orden_presentacion varchar(30)
-  creado_por varchar(300)
-  creado_en varchar(300)
-  modificado_por varchar(300)
-  modificado_en varchar(300)
+  creado_por varchar(200)
+  creado_en TIMESTAMP 
+  modificado_por varchar(200)
+  modificado_en TIMESTAMP 
 
 }
 
@@ -56,14 +56,14 @@ Table SubCategoria{
   id_categoria varchar(30)
   categoria_padre varchar(30)
   nombre_subcategoria varchar(30)
-  descripcion_detallada_sub varchar(30)
+  descripcion_detallada_sub varchar(300)
   estado_sub bool
   por_defecto bool 
   
 
-  creado_por varchar(300)
+  creado_por varchar(200)
   creado_en TIMESTAMP 
-  modificado_por varchar(300)
+  modificado_por varchar(200)
   modificado_en TIMESTAMP 
 
 }
@@ -71,16 +71,16 @@ Table SubCategoria{
 Table presupuesto_detalle{
   id_presupuesto_detalle varchar(30) [primary key]
   id_presupuesto varchar(30)
-  id_subcategoria varchar(30)
+  id_subcategoria varchar(30) 
   presupuesto_padre varchar(30)
-  subcategoria varchar(30)
+  subcategoria varchar(30) 
   monto_mensual_asignado double
   observaciones  varchar(100)
   
 
-  creado_por varchar(300)
+  creado_por varchar(200)
   creado_en TIMESTAMP 
-  modificado_por varchar(300)
+  modificado_por varchar(200)
   modificado_en TIMESTAMP 
 
 }
@@ -91,7 +91,7 @@ Table obligacion_fija{
   id_subcategoria varchar(30)
   usuario varchar(30)
   subcategoria varchar(30)
-  nombre_obligacion VARCHAR(300)
+  nombre_obligacion VARCHAR(50)
   descripcion  varchar(100)
   monto_fijo_mensual double
   dia int
@@ -99,9 +99,9 @@ Table obligacion_fija{
   fecha_inicio DATE 
   fecha_fin DATE 
   
-  creado_por varchar(300)
+  creado_por varchar(200)
   creado_en TIMESTAMP 
-  modificado_por varchar(300)
+  modificado_por varchar(200)
   modificado_en TIMESTAMP 
 
 }
@@ -116,7 +116,7 @@ Table transaccion{
   id_transaccion varchar(30) [primary key]
   id_presupuesto_detalle varchar(30)
   usuario varchar(30)
-  presupuesto double
+  presupuesto varchar(50)
   anio int
   mes int
   subcategoria varchar(30)
@@ -124,15 +124,15 @@ Table transaccion{
   tipo_transaccion varchar(30)
   descripcion varchar (100)
   monto double
-  fecha varchar(30)
-  metodo_pago varchar(30)
+  fecha Date
+  metodo_pago varchar(50)
   num_factura int
   observaciones varchar(100)
   fecha_hora_registro TIMESTAMP 
   
-  creado_por varchar(300)
+  creado_por varchar(200)
   creado_en TIMESTAMP 
-  modificado_por varchar(300)
+  modificado_por varchar(200)
   modificado_en TIMESTAMP 
 
 }
@@ -145,12 +145,15 @@ Ref: "Presupuesto"."id_presupuesto" < "presupuesto_detalle"."id_presupuesto"
 
 Ref: "SubCategoria"."id_subcategoria" < "presupuesto_detalle"."id_subcategoria"
 
-Ref: "presupuesto_detalle"."id_subcategoria" < "obligacion_fija"."id_subcategoria"
 
 Ref: "obligacion_fija"."id_obligacion" < "obligacion_transaccion"."id_obligacion"
 
 Ref: "transaccion"."id_transaccion" < "obligacion_transaccion"."id_transaccion"
 
-Ref: "presupuesto_detalle"."id_presupuesto" < "transaccion"."id_presupuesto_detalle"
 
 Ref: "Categoria"."id_categoria" < "SubCategoria"."id_categoria"
+
+
+Ref: "presupuesto_detalle"."id_presupuesto_detalle" < "transaccion"."id_presupuesto_detalle"
+
+Ref: "SubCategoria"."id_subcategoria" < "obligacion_fija"."id_subcategoria"
