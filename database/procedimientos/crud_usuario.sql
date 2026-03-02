@@ -64,3 +64,13 @@ BEGIN
     COMMIT; 
 END;
 
+CREATE OR REPLACE PROCEDURE sp_eliminar_usuario(p_id int)
+BEGIN
+    IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id) THEN
+        RAISERROR 99003 'usuario no existe';
+        RETURN; 
+    END IF;
+    UPDATE dba.Usuario SET estado = 0 WHERE id_usuario = p_id;
+    COMMIT;
+END;
+
