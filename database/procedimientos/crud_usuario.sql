@@ -86,3 +86,8 @@ BEGIN
     SELECT * FROM dba.Usuario WHERE id_usuario = p_id;
     
 END;
+
+CREATE OR REPLACE PROCEDURE sp_listar_usuarios()
+BEGIN 
+    SELECT * FROM dba.Usuario; 
+END; 
