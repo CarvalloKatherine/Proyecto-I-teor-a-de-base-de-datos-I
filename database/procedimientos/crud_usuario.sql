@@ -42,3 +42,25 @@ BEGIN
 
     COMMIT; 
 END; 
+
+
+CREATE OR REPLACE PROCEDURE sp_actualizar_usuario(p_id int , 
+p_primer_nombre varchar(100), 
+p_segundo_nombre varchar(100),
+p_primer_apellido varchar(100), 
+p_segundo_apellido varchar(100),
+p_salario_mensual NUMERIC(15,2), 
+p_modificado_por varchar(200)
+)
+BEGIN 
+    UPDATE dba.Usuario SET primer_nombre = p_primer_nombre,
+    segundo_nombre = p_segundo_nombre,
+    primer_apellido = p_primer_apellido,
+    segundo_apellido = p_segundo_apellido,
+    salario_mensual_base = p_salario_mensual,
+    modificado_por = p_modificado_por,
+    modificado_en = CURRENT TIMESTAMP,
+    WHERE id_usuario = p_id;
+    COMMIT; 
+END;
+
