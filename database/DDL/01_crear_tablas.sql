@@ -19,7 +19,6 @@ CREATE TABLE Usuario (
 CREATE TABLE Presupuesto (
     id_presupuesto          INTEGER         IDENTITY NOT NULL,
     id_usuario              INTEGER,
-    usuario                 VARCHAR(200),
     nombre_descriptivo      VARCHAR(100),
     anio_inicio             INTEGER,
     mes_inicio              INTEGER,
@@ -56,7 +55,6 @@ CREATE TABLE Categoria (
 CREATE TABLE SubCategoria (
     id_subcategoria         INTEGER         IDENTITY NOT NULL,
     id_categoria            INTEGER,
-    categoria_padre         VARCHAR(30),
     nombre_subcategoria     VARCHAR(30),
     descripcion_detallada_sub VARCHAR(300),
     estado_sub              BIT             DEFAULT 1,
@@ -73,8 +71,6 @@ CREATE TABLE presupuesto_detalle (
     id_presupuesto_detalle  INTEGER         IDENTITY NOT NULL,
     id_presupuesto          INTEGER,
     id_subcategoria         INTEGER,
-    presupuesto_padre       VARCHAR(30),
-    subcategoria            VARCHAR(30),
     monto_mensual_asignado  NUMERIC(15,2),
     observaciones           VARCHAR(100),
     creado_por              VARCHAR(200),
@@ -90,8 +86,6 @@ CREATE TABLE presupuesto_detalle (
 CREATE TABLE obligacion_fija (
     id_obligacion           INTEGER         IDENTITY NOT NULL,
     id_subcategoria         INTEGER,
-    usuario                 VARCHAR(30),
-    subcategoria            VARCHAR(30),
     nombre_obligacion       VARCHAR(50),
     descripcion             VARCHAR(100),
     monto_fijo_mensual      NUMERIC(15,2),
@@ -111,12 +105,8 @@ CREATE TABLE obligacion_fija (
 CREATE TABLE transaccion (
     id_transaccion          INTEGER         IDENTITY NOT NULL,
     id_presupuesto_detalle  INTEGER,
-    usuario                 VARCHAR(30),
-    presupuesto             VARCHAR(50),
     anio                    INTEGER,
     mes                     INTEGER,
-    subcategoria            VARCHAR(30),
-    obligacion              VARCHAR(30),
     tipo_transaccion        VARCHAR(30),
     descripcion             VARCHAR(100),
     monto                   NUMERIC(15,2),

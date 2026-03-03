@@ -18,8 +18,7 @@ Table Usuario {
 Table Presupuesto {
   id_presupuesto int [primary key, increment]
   id_usuario int
-  usuario varchar(200)
-  nombre_descriptivo varchar(100)
+  nombre_presupuesto varchar(100)
   anio_inicio int 
   mes_inicio int 
   anio_fin int 
@@ -54,13 +53,10 @@ Table Categoria{
 Table SubCategoria{
   id_subcategoria int [primary key, increment]
   id_categoria int
-  categoria_padre varchar(30)
   nombre_subcategoria varchar(30)
   descripcion_detallada_sub varchar(300)
   estado_sub bool [DEFAULT : 1]
   por_defecto bool [DEFAULT : 0]
-  
-
   creado_por varchar(200)
   creado_en TIMESTAMP [default: `CURRENT_TIMESTAMP`]
   modificado_por varchar(200)
@@ -72,12 +68,8 @@ Table presupuesto_detalle{
   id_presupuesto_detalle int [primary key, increment]
   id_presupuesto int
   id_subcategoria int
-  presupuesto_padre varchar(30)
-  subcategoria varchar(30) 
   monto_mensual_asignado NUMERIC(15,2)
   observaciones  varchar(100)
-  
-
   creado_por varchar(200)
   creado_en TIMESTAMP [default: `CURRENT_TIMESTAMP`]
   modificado_por varchar(200)
@@ -89,8 +81,6 @@ Table presupuesto_detalle{
 Table obligacion_fija{
   id_obligacion int [primary key, increment]
   id_subcategoria int
-  usuario varchar(30)
-  subcategoria varchar(30)
   nombre_obligacion VARCHAR(50)
   descripcion  varchar(100)
   monto_fijo_mensual NUMERIC(15,2)
@@ -115,12 +105,8 @@ Table obligacion_transaccion{
 Table transaccion{
   id_transaccion int [primary key, increment]
   id_presupuesto_detalle int
-  usuario varchar(30)
-  presupuesto varchar(50)
   anio int
   mes int
-  subcategoria varchar(30)
-  obligacion varchar(30)
   tipo_transaccion varchar(30)
   descripcion varchar (100)
   monto NUMERIC(15,2)
