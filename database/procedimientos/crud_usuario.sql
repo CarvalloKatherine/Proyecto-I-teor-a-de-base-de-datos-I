@@ -64,14 +64,17 @@ BEGIN
     COMMIT; 
 END;
 
-CREATE OR REPLACE PROCEDURE sp_eliminar_usuario(p_id int)
+CREATE OR REPLACE PROCEDURE sp_eliminar_usuario(p_id int, p_modificado_por varchar(200))
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id) THEN
+    IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id AND estado = 1) THEN
         RAISERROR 99003 'usuario no existe';
         RETURN; 
     END IF;
+
+    
     UPDATE dba.Usuario SET estado = 0,
     modificado_en = CURRENT TIMESTAMP,
+    modificado_por = p_modificado_por
     WHERE id_usuario = p_id;
     COMMIT;
 END;
