@@ -53,6 +53,12 @@ p_salario_mensual NUMERIC(15,2),
 p_modificado_por varchar(200)
 )
 BEGIN 
+
+    IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id AND estado = 1) THEN
+        RAISERROR 99003 'usuario no existe';
+        RETURN; 
+    END IF;
+    
     UPDATE dba.Usuario SET primer_nombre = p_primer_nombre,
     segundo_nombre = p_segundo_nombre,
     primer_apellido = p_primer_apellido,

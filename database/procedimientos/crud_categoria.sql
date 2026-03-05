@@ -33,11 +33,17 @@ p_descripcion varchar(300),
 p_color_hex varchar(30),
 p_modificado_por varchar(200))
 BEGIN 
+
+IF NOT EXISTS (SELECT * FROM dba.Categoria WHERE id_categoria = p_id_categoria ) THEN
+        RAISERROR 99003 'categoria no existe';
+        RETURN; 
+    END IF;
+
 UPDATE dba.Categoria SET nombre_categoria = p_nombre, 
 descripcion_detallada = p_descripcion, 
 color_hex = p_color_hex,
 modificado_por = p_modificado_por, 
-modificado_en = CURRENT TIMESTAMP,
+modificado_en = CURRENT TIMESTAMP
 WHERE id_categoria = p_id_categoria;
     COMMIT; 
 END;
@@ -79,7 +85,8 @@ BEGIN
     SELECT * FROM dba.Categoria WHERE id_categoria = p_id_categoria;
 END; 
 ------------------------------------------
-CREATE OR REPLACE PROCEDURE sp_listar_categorias(p_id_usuario int, p_tipo varchar(30))
+CREATE OR REPLACE PROCEDURE sp_listar_categorias(p_id_usuario int, 
+p_tipo varchar(30))
 BEGIN
     IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id_usuario) THEN
         RAISERROR 99003 'usuario no existe';
