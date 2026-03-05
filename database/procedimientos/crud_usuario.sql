@@ -42,7 +42,7 @@ BEGIN
 
     COMMIT; 
 END; 
-
+----------------------------------------
 
 CREATE OR REPLACE PROCEDURE sp_actualizar_usuario(p_id int , 
 p_primer_nombre varchar(100), 
@@ -63,7 +63,7 @@ BEGIN
     WHERE id_usuario = p_id;
     COMMIT; 
 END;
-
+-----------------------------------------
 CREATE OR REPLACE PROCEDURE sp_eliminar_usuario(p_id int, p_modificado_por varchar(200))
 BEGIN
     IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id AND estado = 1) THEN
@@ -79,7 +79,7 @@ BEGIN
     COMMIT;
 END;
 
-
+------------------------------------
 CREATE OR REPLACE PROCEDURE sp_consultar_usuario(p_id int)
 BEGIN
     IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id) THEN
@@ -89,7 +89,7 @@ BEGIN
     SELECT * FROM dba.Usuario WHERE id_usuario = p_id;
     
 END;
-
+---------------------------------
 CREATE OR REPLACE PROCEDURE sp_listar_usuarios()
 BEGIN 
     SELECT * FROM dba.Usuario; 

@@ -1,0 +1,1 @@
+sp_insertar_presupuesto_detalle(p_id_presupuesto, p_id_subcategoria, p_monto_mensual, p_observaciones, p_creado_por)
