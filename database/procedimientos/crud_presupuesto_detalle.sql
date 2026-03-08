@@ -77,10 +77,20 @@ CREATE OR REPLACE PROCEDURE sp_eliminar_presupuesto_detalle(
 p_id_detalle INT
 )
 BEGIN 
+    IF NOT EXISTS (SELECT * FROM dba.presupuesto_detalle WHERE id_presupuesto_detalle = p_id_detalle) THEN
+    RAISERROR 99026 'el detalle  no existe.';
+    RETURN;
+    END IF;
+
     IF EXISTS (SELECT * FROM dba.presupuesto_detalle pd 
     INNER JOIN dba.Presupuesto p ON pd.id_presupuesto = p.id_presupuesto 
     WHERE pd.id_presupuesto_detalle = p_id_detalle AND p.estado_presupuesto = 'Cerrado') THEN
     RAISERROR 99023 'No se puede eliminar un detalle de un presupuesto cerrado.';
+    RETURN;
+    END IF;
+
+    IF EXISTS (SELECT * FROM dba.Transaccion WHERE id_presupuesto_detalle = p_id_detalle) THEN
+    RAISERROR 99027 'No se puede eliminar porque ya existen transacciones vinculadas a este detalle.';
     RETURN;
     END IF;
 

@@ -120,10 +120,27 @@ END;
 
 -----------------------------------------
 
-CREATE OR REPLACE PROCEDURE sp_eliminar_presupuesto(p_id_presupuesto INT)
+CREATE OR REPLACE PROCEDURE sp_eliminar_presupuesto(p_id_presupuesto INT,
+p_modificado_por VARCHAR(200)
+)
 BEGIN 
-    --TODO: VALIDAR LAS TRANSACCIONES Y QUE EL ID EXISTA 
+    IF NOT EXISTS (SELECT 1 FROM dba.Presupuesto WHERE id_presupuesto = p_id_presupuesto) THEN
+        RAISERROR 99028 'el presupuesto no existe.';
+        RETURN; 
+    END IF;
+
+    IF EXISTS (SELECT * FROM dba.Transaccion t
+        INNER JOIN dba.presupuesto_detalle pd ON 
+        t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+        WHERE pd.id_presupuesto = p_id_presupuesto
+    ) THEN
+        RAISERROR 99030 'No se puede eliminar ya que este presupuesto ya tiene transacciones reales registradas.';
+        RETURN;
+    END IF;
+
     UPDATE dba.Presupuesto SET estado_presupuesto = 'cerrado'
+    modificado_por = p_modificado_por,
+    modificado_en = CURRENT TIMESTAMP
     WHERE id_presupuesto = p_id_presupuesto;
     COMMIT; 
 END; 
