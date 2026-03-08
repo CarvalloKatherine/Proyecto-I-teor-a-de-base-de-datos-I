@@ -7,7 +7,7 @@ CREATE OR REPLACE PROCEDURE sp_insertar_subcategoria(
 )
 BEGIN
     
-    IF NOT EXISTS (SELECT 1 FROM dba.Categoria WHERE id_categoria = p_id_categoria) THEN
+    IF NOT EXISTS (SELECT * FROM dba.Categoria WHERE id_categoria = p_id_categoria) THEN
         RAISERROR 99005 'la categoría seleccionada no existe.';
         RETURN; 
     END IF;

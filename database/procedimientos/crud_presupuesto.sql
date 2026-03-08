@@ -81,10 +81,10 @@ END;
 CREATE OR REPLACE PROCEDURE sp_actualizar_presupuesto(
 p_id_presupuesto INT, 
 p_nombre VARCHAR(100), 
-anio_inicio INT, 
-mes_inicio INT, 
-anio_fin INT, 
-mes_fin INT, 
+p_anio_inicio INT, 
+p_mes_inicio INT, 
+p_anio_fin INT, 
+p_mes_fin INT, 
 p_modificado_por VARCHAR(200)
 )
 BEGIN 
@@ -95,13 +95,13 @@ BEGIN
 
     --reglas de negocio 
     -- 1. el año final debe ser mayor o igual al año de inicio 
-    IF p_anio_fin < p_anio_ini THEN
+    IF (p_anio_fin < p_anio_inicio) THEN
         RAISERROR 99014 'No se puede modificar, el año final debe ser mayor o igual al año de inicio';
         RETURN;
     END IF;
 
     --2. Si el año de fin y final son el mismo, el mes final debe ser mayor o igual al mes de inicio 
-    IF p_anio_fin = p_anio_ini AND p_mes_fin < p_mes_ini THEN
+    IF (p_anio_fin = p_anio_inicio) AND (p_mes_fin < p_mes_inicio) THEN
         RAISERROR 99015 'No se puede modificar, si el año es igual, entonces el mes findebe ser mayor o igual al mes de inicio ';
         RETURN;
     END IF;
