@@ -67,6 +67,7 @@ p_descripcion VARCHAR(100),
 p_monto NUMERIC(15,2), 
 p_dia_vencimiento INT, 
 p_fecha_fin DATE, 
+p_vigente BIT,
 p_modificado_por VARCHAR(200)
 )
 BEGIN
@@ -82,6 +83,7 @@ BEGIN
         monto_fijo_mensual = p_monto,
         dia = p_dia_vencimiento,
         fecha_fin = p_fecha_fin,
+        vigente = p_vigente,
         modificado_por = p_modificado_por,
     WHERE id_obligacion = p_id_obligacion;
 
