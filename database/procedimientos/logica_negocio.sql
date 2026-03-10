@@ -103,7 +103,7 @@ BEGIN
     SET p_balance final = p_total_ahorros-p_total_gastos - p_total_ingresos; 
 
 END; 
-
+------------
 CREATE OR REPLACE PROCEDURE sp_calcular_monto_ejecutado_mes(
 p_id_subcategoria INT, 
 p_id_presupuesto INT, 
@@ -119,4 +119,37 @@ BEGIN
     AND pd.id_subcategoria = p_id_subcategoria
     AND t.anio = p_anio 
     AND t.mes = p_mes 
+    AND t.tipo_transaccion = 'gasto';
+END; 
+--------------
+CREATE OR REPLACE PROCEDURE sp_calcular_porcentaje_ejecucion_mes(
+p_id_subcategoria int, 
+p_id_presupuesto int, 
+p_anio int, 
+p_mes int, 
+OUT p_porcentaje NUMERIC(15,2)
+)
+BEGIN 
+DECLARE
+    v_monto_ejecutado NUMERIC(15,2);
+    v_monto_mensual_presupuestado NUMERIC(15,2);
+
+CALL sp_calcular_monto_ejecutado_mes(
+p_id_subcategoria, 
+p_id_presupuesto, 
+p_anio, 
+p_mes,
+v_monto_ejecutado
+);
+
+SELECT ISNULL(monto_mensual_asignado,0) INTO v_monto_mensual_presupuestado
+FROM dba.presupuesto_detalle 
+WHERE id_presupuesto = p_id_presupuesto
+AND id_subcategoria = p_id_subcategoria
+
+IF(v_monto_mensual_presupuestado > 0) THEN 
+SET p_porcentaje = (v_monto_ejecutado/)*100; 
+ELSE 
+SET p_porcentaje = 0; 
+END IF; 
 END; 
