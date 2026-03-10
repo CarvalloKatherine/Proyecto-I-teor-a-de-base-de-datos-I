@@ -96,10 +96,27 @@ BEGIN
     FROM dba.transaccion t 
     INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
     WHERE pd.id_presupuesto = p_id_presupuesto
-    ANDt.anio = p_anio 
+    AND t.anio = p_anio 
     AND t.mes = p_mes 
     AND tipo_transaccion = 'ahorro'
 
     SET p_balance final = p_total_ahorros-p_total_gastos - p_total_ingresos; 
 
+END; 
+
+CREATE OR REPLACE PROCEDURE sp_calcular_monto_ejecutado_mes(
+p_id_subcategoria INT, 
+p_id_presupuesto INT, 
+p_anio INT, 
+p_mes INT, 
+OUT p_monto_ejecutado NUMERIC (15,2)
+)
+BEGIN 
+    SELECT ISNULL(sum(t.monto),0) into p_monto_ejecutado
+    FROM dba.transaccion t 
+    INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+    WHERE pd.id_presupuesto = p_id_presupuesto
+    AND pd.id_subcategoria = p_id_subcategoria
+    AND t.anio = p_anio 
+    AND t.mes = p_mes 
 END; 
