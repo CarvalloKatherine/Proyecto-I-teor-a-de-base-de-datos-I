@@ -62,3 +62,44 @@ BEGIN
     --muestra las que estan pendientes de pago en el mes actual
 
 END; 
+
+-------------
+
+CREATE OR REPLACE PROCEDURE sp_calcular_balance_mensual(
+p_id_usuario INT, 
+p_id_presupuesto INT, 
+p_anio INT, 
+p_mes INT, 
+OUT p_total_ingresos NUMERIC(15,2), 
+OUT p_total_gastos NUMERIC(15,2), 
+OUT p_total_ahorros NUMERIC(15,2), 
+OUT p_balance_final NUMERIC(15,2)
+)
+BEGIN 
+    SELECT ISNULL(sum(t.monto),0) into p_total_ingresos
+    FROM dba.transaccion t 
+    INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+    WHERE pd.id_presupuesto = p_id_presupuesto
+    AND t.anio = p_anio 
+    AND t.mes = p_mes 
+    AND tipo_transaccion = 'ingreso';
+
+    SELECT ISNULL(sum(t.monto),0) into p_total_gastos
+    FROM dba.transaccion t 
+    INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+    WHERE pd.id_presupuesto = p_id_presupuesto
+    AND t.anio = p_anio 
+    AND t.mes = p_mes 
+    AND tipo_transaccion = 'gasto';
+
+    SELECT ISNULL(sum(t.monto),0) into p_total_ahorros
+    FROM dba.transaccion t 
+    INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+    WHERE pd.id_presupuesto = p_id_presupuesto
+    ANDt.anio = p_anio 
+    AND t.mes = p_mes 
+    AND tipo_transaccion = 'ahorro'
+
+    SET p_balance final = p_total_ahorros-p_total_gastos - p_total_ingresos; 
+
+END; 
