@@ -188,8 +188,37 @@ BEGIN
     WHERE id_presupuesto = p_id_presupuesto
     AND id_usuario = p_id;
     COMMIT; 
+END; 
 
-    
+---
+CREATE OR REPLACE PROCEDURE sp_obtener_resumen_categoria_mes(p_id_categoria INT, 
+p_id_presupuesto INT, 
+p_anio INT, 
+p_mes INT, 
+OUT p_monto_presupuestado NUMERIC(15,2), 
+OUT p_monto_ejecutado NUMERIC(15,2), 
+OUT p_porcentaje NUMERIC(15,2)
+)
+BEGIN
+    SELECT ISNULL(SUM(pd.monto_mensual_asignado), 0) INTO p_monto_presupuestado
+    FROM dba.presupuesto_detalle pd
+    INNER JOIN dba.SubCategoria sc ON pd.id_subcategoria = sc.id_subcategoria
+    WHERE pd.id_presupuesto = p_id_presupuesto
+    AND sc.id_categoria = p_id_categoria;
 
+    SELECT ISNULL(SUM(t.monto), 0) INTO p_monto_ejecutado
+    FROM dba.transaccion t
+    INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+    INNER JOIN dba.SubCategoria sc ON pd.id_subcategoria = sc.id_subcategoria
+    WHERE pd.id_presupuesto = p_id_presupuesto
+    AND sc.id_categoria = p_id_categoria
+    AND t.anio = p_anio 
+    AND t.mes = p_mes 
+    AND t.tipo_transaccion = 'gasto';
 
+    IF p_monto_presupuestado > 0 THEN
+    SET p_porcentaje = (p_monto_ejecutado / p_monto_presupuestado) *100;
+    ELSE
+    SET p_porcentaje = 0;
+    END IF;  
 END; 
