@@ -152,4 +152,44 @@ SET p_porcentaje = (v_monto_ejecutado/)*100;
 ELSE 
 SET p_porcentaje = 0; 
 END IF; 
+
+END; 
+
+---------
+
+CREATE OR REPLACE PROCEDURE sp_cerrar_presupuesto(
+p_id_presupuesto INT, 
+p_modificado_por VARCHAR(200),
+p_id int
+)
+BEGIN 
+    DECLARE 
+    v_fecha_fin date; 
+    v_ingresos NUMERIC(15,2);
+    v_gastos NUMERIC(15,2);
+    v_ahorros NUMERIC(15,2);
+    v_balance NUMERIC(15,2);
+
+    select fecha_fin into v_fecha_fin 
+    from dba.presupuesto WHERE id_presupuesto = p_id_presupuesto 
+    AND id_usuario = p_id_usuario;
+
+    if(CURRENT DATE < v_fecha_fin)THEN 
+    return; 
+    END IF; 
+    
+
+    CALL sp_calcular_balance_mensual(p_id, p_id_presupuesto,YEAR(v_fecha_fin), MONTH(v_fecha_fin),v_ingresos, 
+    v_gastos, v_ahorros, v_balance);
+
+    UPDATE dba.Presupuesto SET estado_presupuesto = 'cerrado',
+    modificado_por = p_modificado_por,
+    modificado_en = CURRENT TIMESTAMP
+    WHERE id_presupuesto = p_id_presupuesto
+    AND id_usuario = p_id;
+    COMMIT; 
+
+    
+
+
 END; 

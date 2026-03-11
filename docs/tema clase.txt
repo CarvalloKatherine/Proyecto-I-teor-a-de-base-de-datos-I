@@ -1,0 +1,14 @@
+tema clase: 
+-pivot 
+-crosstable
+
+*revisar pivot table en Excel 
+* columnas, filas y valores, no filtros
+
+lenguaje procedimental vs lenguaje declarativo
+
+- convertir columnas a filas
+- columnas 01|02|03|04|05|06|0tr0s (7-+)
+- reglas para unión 
+- no puede haber una función de agregación sin group by??
+- tener la base de datos que nos compartio tenerla lista 
