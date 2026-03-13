@@ -93,3 +93,26 @@ BEGIN
 
     return v_total_presupuestado; 
 END; 
+
+--5
+CREATE OR REPLACE FUNCTION fn_obtener_total_ejecutado_categoria_mes(p_id_categoria INT, 
+p_anio INT, 
+p_mes INT
+)
+RETURNS NUMERIC(15,2)
+BEGIN 
+DECLARE v_total_ejecutado NUMERIC(15,2); 
+
+select isnull(sum(t.monto),0) into v_totoal_ejecutado
+from dba.transaccion t
+INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+INNER JOIN dba.subcategoria s ON pd.id_subcategoria = s.id_subcategoria
+WHERE s.id_categoria = p_id_categoria
+AND pd.id_presupuesto = p_id_presupuesto
+AND t.anio = p_anio 
+AND t.mes = p_mes 
+AND t.tipo_transaccion = 'gasto';
+
+RETURN v_totoal_ejecutado;
+
+END; 
