@@ -158,7 +158,7 @@ END IF;
 RETURN v_es_valido;  
 END; 
 
--8
+--8
 CREATE OR REPLACE FUNCTION fn_obtener_categoria_por_subcategoria(p_id_subcategoria INT)
 RETURNS INT
 BEGIN 
@@ -173,4 +173,32 @@ DECLARE v_id_categoria INT;
     WHERE id_subcategoria = p_id_subcategoria; 
 
     return v_id_categoria; 
+END; 
+
+--9 
+CREATE OR REPLACE FUNCTION fn_calcular_proyeccion_gasto_mensual(id_subcategoria int, 
+anio int, 
+mes int
+)
+returns 
+BEGIN 
+DECLARE
+RETURN
+END; 
+
+
+--10 
+CREATE OR REPLACE FUNCTION fn_obtener_promedio_gasto_subcategoria(p_id_usuario int, 
+p_id_subcategoria int, 
+p_cantidad_meses int)
+RETURNS NUMERIC(15,2)
+BEGIN
+DECLARE v_promedio NUMERIC(15,2); 
+DECLARE v_gastado NUMERIC(15,2); 
+
+
+
+    SELECT 
+
+RETURN v_promedio; 
 END; 
