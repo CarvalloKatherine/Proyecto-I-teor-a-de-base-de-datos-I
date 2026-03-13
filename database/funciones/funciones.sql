@@ -132,3 +132,28 @@ SET v_dias_restantes = Days(v_vencimiento, CURRENT DATE);
 
 RETURN v_dias_restantes; 
 END; 
+
+--7 
+CREATE OR REPLACE FUNCTION fn_validar_vigencia_presupuesto(
+fecha DATE, 
+p_id_presupuesto INT)
+RETURNS INT
+BEGIN 
+DECLARE v_es_valido INT;
+DECLARE v_anio_inicio INT;
+DECLARE v_mes_inicio INT;
+DECLARE v_anio_fin INT;
+DECLARE v_mes_fin INT;
+
+SELECT anio_inicio, mes_inicio, anio_fin, mes_fin into 
+v_anio_inicio, v_mes_inicio, v_anio_fin, v_mes_fin
+FROM dba.Presupuesto 
+where id_presupuesto = p_id_presupuesto ;
+IF ((YEAR(fecha) > v_anio_inicio OR (YEAR(fecha) = v_anio_inicio AND MONTH(fecha) >= v_mes_inicio))
+AND 
+(v_anio_fin IS NULL OR (YEAR(fecha) < v_anio_fin OR (YEAR(fecha) = v_anio_fin AND MONTH(fecha) <= v_mes_fin)))) 
+THEN SET v_es_valido = 1;
+ELSE SET v_es_valido = 0;
+END IF;
+RETURN v_es_valido;  
+END; 
