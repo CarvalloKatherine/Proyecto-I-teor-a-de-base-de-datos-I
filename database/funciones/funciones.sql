@@ -114,5 +114,21 @@ AND t.mes = p_mes
 AND t.tipo_transaccion = 'gasto';
 
 RETURN v_totoal_ejecutado;
+END; 
 
+--6
+CREATE OR REPLACE FUNCTION fn_dias_hasta_vencimiento(
+p_id_obligacion INT)
+RETURNS INT
+BEGIN 
+DECLARE v_vencimiento DATE; 
+DECLARE v_dias_restantes int; 
+
+SELECT fecha_vencimiento INTO v_vencimiento 
+FROM dba.obligacion_fija
+WHERE id_obligacion = p_id_obligacion;
+
+SET v_dias_restantes = Days(v_vencimiento, CURRENT DATE); 
+
+RETURN v_dias_restantes; 
 END; 
