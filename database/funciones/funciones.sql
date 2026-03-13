@@ -50,9 +50,28 @@ END;
 
 
 --3 
-fn_obtener_balance_subcategoria(
-id_presupuesto, 
-id_subcategoria, 
-anio, 
-mes
+CREATE OR REPLACE FUNCTION fn_obtener_balance_subcategoria(
+p_id_presupuesto INT,
+p_id_subcategoria INT, 
+p_anio INT, 
+p_mes INT
 )
+RETURNS NUMERIC(15,2)
+BEGIN
+
+DECLARE v_balance NUMERIC(15,2);
+DECLARE v_monto_presupuestado NUMERIC(15,2); 
+DECLARE v_ejecutado NUMERIC(15,2); 
+
+SELECT ISNULL(monto_mensual_asignado,0) INTO v_monto_presupuestado
+FROM dba.presupuesto_detalle 
+WHERE id_presupuesto = p_id_presupuesto
+AND id_subcategoria = p_id_subcategoria;
+
+SET v_ejecutado = fn_calcular_monto_ejecutado(
+p_id_subcategoria, p_id_presupuesto, p_anio, p_mes);
+
+SET v_balance = v_monto_presupuestado - v_ejecutado;
+
+RETURN v_balance;
+END; 
