@@ -157,3 +157,20 @@ ELSE SET v_es_valido = 0;
 END IF;
 RETURN v_es_valido;  
 END; 
+
+-8
+CREATE OR REPLACE FUNCTION fn_obtener_categoria_por_subcategoria(p_id_subcategoria INT)
+RETURNS INT
+BEGIN 
+DECLARE v_id_categoria INT; 
+
+    IF NOT EXISTS (SELECT 1 FROM dba.SubCategoria WHERE id_subcategoria = p_id_subcategoria) THEN
+        RAISERROR 99045 'El id de la subcategoria no existe.';
+    END IF;
+
+    SELECT id_categoria into v_id_categoria
+    FROM dba.SubCategoria 
+    WHERE id_subcategoria = p_id_subcategoria; 
+
+    return v_id_categoria; 
+END; 
