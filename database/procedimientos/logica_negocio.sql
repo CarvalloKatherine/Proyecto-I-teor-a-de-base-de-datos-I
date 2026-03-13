@@ -100,7 +100,7 @@ BEGIN
     AND t.mes = p_mes 
     AND tipo_transaccion = 'ahorro'
 
-    SET p_balance final = p_total_ahorros-p_total_gastos - p_total_ingresos; 
+    SET p_balance_final = p_total_ahorros-p_total_gastos - p_total_ingresos; 
 
 END; 
 ------------
@@ -148,7 +148,7 @@ WHERE id_presupuesto = p_id_presupuesto
 AND id_subcategoria = p_id_subcategoria
 
 IF(v_monto_mensual_presupuestado > 0) THEN 
-SET p_porcentaje = (v_monto_ejecutado/)*100; 
+SET p_porcentaje = (v_monto_ejecutado/v_monto_mensual_presupuestado)*100; 
 ELSE 
 SET p_porcentaje = 0; 
 END IF; 
