@@ -75,3 +75,21 @@ SET v_balance = v_monto_presupuestado - v_ejecutado;
 
 RETURN v_balance;
 END; 
+
+--4
+CREATE OR REPLACE FUNCTION fn_obtener_total_categoria_mes(
+p_id_categoria INT, 
+p_id_presupuesto INT, 
+p_anio INT, 
+p_mes INT)
+RETURNS NUMERIC(15,2)
+BEGIN
+    DECLARE v_total_presupuestado NUMERIC(15,2);
+    SELECT ISNULL(sum(monto_mensual_asignado),0) into v_total_presupuestado
+    FROM dba.presupuesto_detalle p INNER JOIN SubCategoria cs 
+    ON p.id_subcategoria = cs.id_subcategoria 
+    Where id_categoria = p_id_categoria
+    and pd.id_presupuesto = p_id_presupuesto; 
+
+    return v_total_presupuestado; 
+END; 
