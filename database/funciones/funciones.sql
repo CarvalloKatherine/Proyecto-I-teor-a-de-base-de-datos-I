@@ -195,10 +195,27 @@ RETURNS NUMERIC(15,2)
 BEGIN
 DECLARE v_promedio NUMERIC(15,2); 
 DECLARE v_gastado NUMERIC(15,2); 
+DECLARE v_anio_inicio int;
+DECLARE v_mes_inicio int; 
 
+SET v_mes_inicio = MONTH(DATEADD(month, -p_cantidad_meses, CURRENT DATE));
+SET v_anio_inicio = YEAR(DATEADD(month, -p_cantidad_meses, CURRENT DATE));
 
+SELECT ISNULL(sum(t.monto),0)INTO v_gastado FROM dba.transaccion t
+INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+INNER JOIN dba.Presupuesto p ON pd.id_presupuesto = p.id_presupuesto
+WHERE p.id_usuario = p_id_usuario
+AND pd.id_subcategoria = p_id_subcategoria
+AND t.tipo_transaccion = 'gasto'
+AND (t.anio > v_anio_inicio OR (t.anio = v_anio_inicio AND t.mes >= v_mes_inicio));
 
-    SELECT 
-
+SET v_promedio = v_gastado/p_cantidad_meses; 
 RETURN v_promedio; 
 END; 
+
+
+/*
+Funciones de date investigadas: 
+MONTH(), YEAR(), DAYS(): Extrae la parte especifica de la fecha
+DATEADD(datepart, number, date): agrega o resta la cantidad de tiempo en la fecha 
+*/

@@ -49,8 +49,7 @@ BEGIN
         p_creado_por
     );
 
-    SELECT MAX(id_transaccion) INTO v_id_transaccion 
-    FROM dba.transaccion;
+    SET  v_id_transaccion = @@identity; 
 
     IF p_id_obligacion IS NOT NULL THEN
         
@@ -68,8 +67,7 @@ BEGIN
 
     COMMIT; 
 END; 
---TODO: REVISAR EL INSERT
-----------------------
+
 CREATE OR REPLACE PROCEDURE sp_actualizar_transaccion(
 p_id_transaccion INT, 
 p_anio INT, 

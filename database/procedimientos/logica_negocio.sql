@@ -1,6 +1,12 @@
 /*
 CONSULTAR!
-sp_crear_presupuesto_completo(p_id_usuario, p_nombre, p_descripcion, p_periodo_inicio, p_periodo_fin, p_lista_subcategorias_json, p_creado_por)
+sp_crear_presupuesto_completo(p_id_usuario, 
+p_nombre, 
+p_descripcion, 
+p_periodo_inicio, 
+p_periodo_fin, 
+p_lista_subcategorias_json, 
+p_creado_por)
 */
 
 /*CREATE OR REPLACE PROCEDURE sp_registrar_transaccion_completa(
