@@ -48,7 +48,7 @@ p_observaciones VARCHAR(200),
 p_modificado_por VARCHAR(200)
 )
 BEGIN
-    IF NOT EXISTS(SELECT * FROM dba.presupuesto_detalle pd INNER JOIN dba.presupuesto_detalle p ON pd.id_presupuesto_detalle = p.id_presupuesto WHERE pd.id_presupuesto_detalle = p_id_detalle AND 
+    IF NOT EXISTS(SELECT 1 FROM dba.presupuesto_detalle pd INNER JOIN dba.presupuesto_detalle p ON pd.id_presupuesto_detalle = p.id_presupuesto WHERE pd.id_presupuesto_detalle = p_id_detalle AND 
     p.estado_presupuesto IN ('activo','borrador')
     )THEN
     RAISERROR 99024 'el detalle no existe o el presupuesto ya esta cerrado y no permite cambios.';
@@ -77,19 +77,19 @@ CREATE OR REPLACE PROCEDURE sp_eliminar_presupuesto_detalle(
 p_id_detalle INT
 )
 BEGIN 
-    IF NOT EXISTS (SELECT * FROM dba.presupuesto_detalle WHERE id_presupuesto_detalle = p_id_detalle) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.presupuesto_detalle WHERE id_presupuesto_detalle = p_id_detalle) THEN
     RAISERROR 99026 'el detalle  no existe.';
     RETURN;
     END IF;
 
-    IF EXISTS (SELECT * FROM dba.presupuesto_detalle pd 
+    IF EXISTS (SELECT 1 FROM dba.presupuesto_detalle pd 
     INNER JOIN dba.Presupuesto p ON pd.id_presupuesto = p.id_presupuesto 
     WHERE pd.id_presupuesto_detalle = p_id_detalle AND p.estado_presupuesto = 'Cerrado') THEN
     RAISERROR 99023 'No se puede eliminar un detalle de un presupuesto cerrado.';
     RETURN;
     END IF;
 
-    IF EXISTS (SELECT * FROM dba.Transaccion WHERE id_presupuesto_detalle = p_id_detalle) THEN
+    IF EXISTS (SELECT 1 FROM dba.Transaccion WHERE id_presupuesto_detalle = p_id_detalle) THEN
     RAISERROR 99027 'No se puede eliminar porque ya existen transacciones vinculadas a este detalle.';
     RETURN;
     END IF;
@@ -103,7 +103,7 @@ END;
 CREATE OR REPLACE PROCEDURE sp_consultar_presupuesto_detalle(p_id_detalle INT)
 BEGIN 
 
-    IF NOT EXISTS (SELECT * FROM dba.presupuesto_detalle WHERE id_presupuesto_detalle = p_id_detalle) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.presupuesto_detalle WHERE id_presupuesto_detalle = p_id_detalle) THEN
         RAISERROR 99003 'detalle no existe';
         RETURN; 
     END IF;
@@ -132,7 +132,7 @@ END;
 --------------------
 CREATE OR REPLACE PROCEDURE sp_listar_detalles_presupuesto(p_id_presupuesto INT )
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.presupuesto_detalle WHERE id_presupuesto_detalle = p_id_detalle) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.presupuesto_detalle WHERE id_presupuesto_detalle = p_id_detalle) THEN
         RAISERROR 99003 'detalle no existe';
         RETURN; 
     END IF; 

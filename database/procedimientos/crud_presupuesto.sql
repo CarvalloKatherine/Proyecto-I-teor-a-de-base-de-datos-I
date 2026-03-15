@@ -15,26 +15,26 @@ BEGIN
 
     --reglas de negocio 
     -- 1. el año final debe ser mayor o igual al año de inicio 
-    IF p_anio_fin < p_anio_inicio THEN
+    IF (p_anio_fin < p_anio_inicio) THEN
         RAISERROR 99014 'el año final debe ser mayor o igual al año de inicio';
         RETURN;
     END IF;
 
     --2. Si el año de fin y final son el mismo, el mes final debe ser mayor o igual al mes de inicio 
-    IF p_anio_fin = p_anio_inicio AND p_mes_fin < p_mes_inicio THEN
+    IF (p_anio_fin = p_anio_inicio AND p_mes_fin < p_mes_inicio) THEN
         RAISERROR 99015 'si el año es igual, entonces el mes findebe ser mayor o igual al mes de inicio ';
         RETURN;
     END IF;
 
     -- 3. IDEALMENTE : el ingreso total presupuestado debe ser mayor o igual a la suma de gastos y ahorros presupuestados 
-    IF p_ingreso_total < (p_gasto_total + p_ahorro_total) THEN
+    IF (p_ingreso_total < (p_gasto_total + p_ahorro_total)) THEN
         RAISERROR 99016 'el ingreso total presupuestado debe ser mayor o igual a la suma de gastos y ahorros presupuestados';
         RETURN;
     END IF;
 
    --4. validar que solo pueda existir un presupuesto por usuario en un periodo dado 
     IF EXISTS (
-        SELECT * FROM dba.Presupuesto 
+        SELECT 1 FROM dba.Presupuesto 
         WHERE id_usuario = p_id_usuario 
         AND estado_presupuesto = 'Activo'
         AND anio_inicio = p_anio_inicio 
@@ -88,7 +88,7 @@ p_mes_fin INT,
 p_modificado_por VARCHAR(200)
 )
 BEGIN 
-    IF NOT EXISTS (SELECT * FROM dba.Presupuesto WHERE id_presupuesto = p_id_presupuesto AND estado_presupuesto IN ('Activo', 'Borrador')) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.Presupuesto WHERE id_presupuesto = p_id_presupuesto AND estado_presupuesto IN ('Activo', 'Borrador')) THEN
         RAISERROR 99003 'Presupuesto no existe';
         RETURN; 
     END IF;
@@ -129,7 +129,7 @@ BEGIN
         RETURN; 
     END IF;
 
-    IF EXISTS (SELECT * FROM dba.Transaccion t
+    IF EXISTS (SELECT 1 FROM dba.Transaccion t
         INNER JOIN dba.presupuesto_detalle pd ON 
         t.id_presupuesto_detalle = pd.id_presupuesto_detalle
         WHERE pd.id_presupuesto = p_id_presupuesto
@@ -150,12 +150,27 @@ CREATE OR REPLACE PROCEDURE sp_consultar_presupuesto(
 p_id_presupuesto INT)
 BEGIN
     
-    IF NOT EXISTS (SELECT * FROM dba.Presupuesto WHERE id_presupuesto = p_id_presupuesto) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.Presupuesto WHERE id_presupuesto = p_id_presupuesto) THEN
         RAISERROR 99003 'Presupuesto no existe';
         RETURN; 
     END IF;
 
-    SELECT * FROM dba.Presupuesto 
+    SELECT id_presupuesto, 
+    id_usuario,
+    nombre_presupuesto,
+    anio_inicio,
+    mes_inicio,
+    anio_fin,
+    mes_fin,
+    total_ingresos,
+    total_gastos,
+    total_ahorro,
+    fecha_hora_creacion,
+    estado_presupuesto,
+    creado_en,
+    creado_por
+    FROM dba.Presupuesto 
+    WHERE id_presupuesto = p_id_presupuesto; 
 END; 
 
 ----------------------------------
@@ -163,11 +178,24 @@ CREATE OR REPLACE PROCEDURE sp_listar_presupuestos_usuario(
 p_id_usuario INT , 
 p_estado VARCHAR(30))
 BEGIN 
-    IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id_usuario) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.Usuario WHERE id_usuario = p_id_usuario) THEN
         RAISERROR 99003 'Presupuesto no existe';
         RETURN; 
     END IF;
 
-    Select * from dba.presupuesto WHERE
+    Select id_presupuesto, 
+    id_usuario,
+    nombre_presupuesto,
+    anio_inicio,
+    mes_inicio,
+    anio_fin,
+    mes_fin,
+    total_ingresos,
+    total_gastos,
+    total_ahorro,
+    fecha_hora_creacion,
+    estado_presupuesto,
+    creado_en,
+    creado_por from dba.presupuesto WHERE
     id_usuario = p_usuario AND estado_presupuesto = p_estado; 
 END; 

@@ -1,14 +1,25 @@
-/*
-CONSULTAR!
-sp_crear_presupuesto_completo(p_id_usuario, 
-p_nombre, 
-p_descripcion, 
-p_periodo_inicio, 
-p_periodo_fin, 
-p_lista_subcategorias_json, 
-p_creado_por)
-*/
+/*CREATE OR REPLACE PROCEDURE sp_crear_presupuesto_completo(
+p_id_usuario INT, 
+p_nombre VARCHAR(100), 
+p_anio_inicio INT,
+p_mes_inicio INT,
+p_anio_fin INT,
+p_mes_fin INT,
+p_ingreso_total NUMERIC(15,2),
+p_gasto_total NUMERIC(15,2),
+p_ahorro_total NUMERIC(15,2),
+p_lista_subcategorias_json LONG VARCHAR, 
+p_creado_por VARCHAR(200)
+)
+BEGIN 
+DECLARE v_id_presupuesto int; 
 
+
+
+COMMIT; 
+END;*/
+
+------------------
 CREATE OR REPLACE PROCEDURE sp_registrar_transaccion_completa(
 p_id_usuario int, 
 p_id_detalle int, 

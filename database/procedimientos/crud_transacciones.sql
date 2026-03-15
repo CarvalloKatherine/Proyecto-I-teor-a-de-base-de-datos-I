@@ -53,7 +53,7 @@ BEGIN
 
     IF p_id_obligacion IS NOT NULL THEN
         
-    IF EXISTS (SELECT * FROM dba.obligacion_fija WHERE id_obligacion = p_id_obligacion) THEN
+    IF EXISTS (SELECT 1 FROM dba.obligacion_fija WHERE id_obligacion = p_id_obligacion) THEN
     INSERT INTO dba.obligacion_transaccion (id_transaccion, id_obligacion)
     VALUES (v_id_transaccion, p_id_obligacion);
         ELSE
@@ -81,7 +81,7 @@ p_observaciones VARCHAR(100),
 p_modificado_por VARCHAR(200)
 )
 BEGIN 
-IF NOT EXISTS (SELECT * FROM dba.transaccion t
+IF NOT EXISTS (SELECT 1 FROM dba.transaccion t
 INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
 INNER JOIN dba.Presupuesto p ON pd.id_presupuesto = p.id_presupuesto
 WHERE t.id_transaccion = p_id_transaccion 
@@ -96,27 +96,27 @@ RAISERROR 99051 'el monto de la transacción debe ser mayor a cero.';
 RETURN;
 END IF;
 
-    UPDATE dba.transaccion SET 
-        anio = p_anio,
-        mes = p_mes,
-        descripcion = p_descripcion,
-        monto = p_monto,
-        fecha = p_fecha,
-        metodo_pago = p_metodo_pago,
-        num_factura = p_num_factura,
-        observaciones = p_observaciones,
-        modificado_por = p_modificado_por,
-        modificado_en = CURRENT TIMESTAMP
-    WHERE id_transaccion = p_id_transaccion;
+UPDATE dba.transaccion SET 
+anio = p_anio,
+mes = p_mes,
+descripcion = p_descripcion,
+monto = p_monto,
+fecha = p_fecha,
+metodo_pago = p_metodo_pago,
+num_factura = p_num_factura,
+observaciones = p_observaciones,
+modificado_por = p_modificado_por,
+modificado_en = CURRENT TIMESTAMP
+WHERE id_transaccion = p_id_transaccion;
 
-    COMMIT; 
+COMMIT; 
 END; 
 ------------------
 
 CREATE OR REPLACE PROCEDURE sp_eliminar_transaccion(p_id_transaccion INT)
 BEGIN
 
-IF NOT EXISTS (SELECT * FROM dba.transaccion t
+IF NOT EXISTS (SELECT 1 FROM dba.transaccion t
 INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
 INNER JOIN dba.Presupuesto p ON pd.id_presupuesto = p.id_presupuesto
 WHERE t.id_transaccion = p_id_transaccion AND 
@@ -135,24 +135,34 @@ END;
 CREATE OR REPLACE PROCEDURE sp_consultar_transaccion(
 p_id_transaccion INT)
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.transacciones WHERE id_transaccion = p_id_transaccion) THEN
-        RAISERROR 99035 'La transaccion no existe.';
-        RETURN;
-    END IF;
+IF NOT EXISTS (SELECT 1 FROM dba.transacciones WHERE id_transaccion = p_id_transaccion) THEN
+RAISERROR 99035 'La transaccion no existe.';
+RETURN;
+END IF;
 
-    SELECT 
-        t.*, 
-        s.nombre_subcategoria, 
-        c.nombre_categoria,
-        c.tipo_categoria,
-        o.nombre_obligacion AS vinculada_a_obligacion
-    FROM dba.transaccion t
-    INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
-    INNER JOIN dba.SubCategoria s ON pd.id_subcategoria = s.id_subcategoria
-    INNER JOIN dba.Categoria c ON s.id_categoria = c.id_categoria
-    LEFT JOIN dba.obligacion_transaccion ot ON t.id_transaccion = ot.id_transaccion
-    LEFT JOIN dba.obligacion_fija o ON ot.id_obligacion = o.id_obligacion
-    WHERE t.id_transaccion = p_id_transaccion;
+SELECT 
+t.id_transaccion,
+t.id_presupuesto_detalle,
+t.anio,
+t.mes,
+t.tipo_transaccion,
+t.descripcion,
+t.monto,
+t.fecha,
+t.metodo_pago,
+t.observaciones,
+t.fecha_hora_registro, 
+s.nombre_subcategoria, 
+c.nombre_categoria,
+c.tipo_categoria,
+o.nombre_obligacion AS vinculada_a_obligacion
+FROM dba.transaccion t
+INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+INNER JOIN dba.SubCategoria s ON pd.id_subcategoria = s.id_subcategoria
+INNER JOIN dba.Categoria c ON s.id_categoria = c.id_categoria
+LEFT JOIN dba.obligacion_transaccion ot ON t.id_transaccion = ot.id_transaccion
+LEFT JOIN dba.obligacion_fija o ON ot.id_obligacion = o.id_obligacion
+WHERE t.id_transaccion = p_id_transaccion;
 
 END; 
 ----------------
@@ -162,17 +172,17 @@ p_mes INT,
 p_tipo VARCHAR(30))
 BEGIN
 
-    SELECT 
-        t.id_transaccion,
-        t.fecha,
-        t.descripcion,
-        t.monto,
-        t.tipo_transaccion,
-        s.nombre_subcategoria,
-        t.mes AS mes_imputado
-    FROM dba.transaccion t
-    INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
-    INNER JOIN dba.SubCategoria s ON pd.id_subcategoria = s.id_subcategoria
-    WHERE pd.id_presupuesto = p_id_presupuesto;
+SELECT 
+t.id_transaccion,
+t.fecha,
+t.descripcion,
+t.monto,
+t.tipo_transaccion,
+s.nombre_subcategoria,
+t.mes AS mes_imputado
+FROM dba.transaccion t
+INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+INNER JOIN dba.SubCategoria s ON pd.id_subcategoria = s.id_subcategoria
+WHERE pd.id_presupuesto = p_id_presupuesto;
     
 END; 

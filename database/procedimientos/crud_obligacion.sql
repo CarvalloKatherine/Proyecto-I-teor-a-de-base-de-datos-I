@@ -9,12 +9,12 @@ p_fecha_fin DATE,
 p_creado_por VARCHAR(200)
 )
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.SubCategoria WHERE id_subcategoria = p_id_subcategoria) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.SubCategoria WHERE id_subcategoria = p_id_subcategoria) THEN
         RAISERROR 99031 'la subcategoria no existe.';
         RETURN;
     END IF;
 
-    IF NOT EXISTS (SELECT * FROM dba.SubCategoria s
+    IF NOT EXISTS (SELECT 1 FROM dba.SubCategoria s
         INNER JOIN dba.Categoria c ON s.id_categoria = c.id_categoria
         WHERE s.id_subcategoria = p_id_subcategoria 
         AND c.tipo_categoria = 'gasto'
@@ -72,7 +72,7 @@ p_modificado_por VARCHAR(200)
 )
 BEGIN
 
-    IF NOT EXISTS (SELECT * FROM dba.obligacion_fija WHERE id_obligacion = p_id_obligacion) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.obligacion_fija WHERE id_obligacion = p_id_obligacion) THEN
         RAISERROR 99035 'La obligación no existe.';
         RETURN;
     END IF;
@@ -97,7 +97,7 @@ p_id_obligacion INT,
 p_modificado_por varchar(200))
 BEGIN
 
-IF NOT EXISTS (SELECT * FROM dba.obligacion_fija WHERE id_obligacion = p_id_obligacion) THEN
+IF NOT EXISTS (SELECT 1 FROM dba.obligacion_fija WHERE id_obligacion = p_id_obligacion) THEN
         RAISERROR 99035 'La obligación no existe.';
         RETURN;
     END IF;
@@ -115,12 +115,23 @@ END;
 
 CREATE OR REPLACE PROCEDURE sp_consultar_obligacion(p_id_obligacion INT)
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.obligacion_fija WHERE id_obligacion = p_id_obligacion) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.obligacion_fija WHERE id_obligacion = p_id_obligacion) THEN
         RAISERROR 99035 'La obligación no existe.';
         RETURN;
     END IF;
 
-    SELECT o.*, s.nombre_subcategoria FROM dba.obligacion_fija o
+    SELECT
+    o.id_obligacion,
+    o.id_subcategoria,
+    o.nombre_obligacion,
+    o.descripcion,
+    o.monto_fijo_mensual,
+    o.dia,
+    o.vigente,
+    o.fecha_inicio,
+    o.fecha_fin,
+    s.nombre_subcategoria 
+    FROM dba.obligacion_fija o
     INNER JOIN dba.SubCategoria s ON o.id_subcategoria = s.id_subcategoria
     WHERE o.id_obligacion = p_id_obligacion;
 
@@ -132,14 +143,19 @@ CREATE OR REPLACE PROCEDURE sp_listar_obligaciones_usuario(
 p_id_usuario INT, 
 p_activo bit)
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.obligacion_fija WHERE id_obligacion = p_id_obligacion) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.obligacion_fija WHERE id_obligacion = p_id_obligacion) THEN
         RAISERROR 99035 'La obligación no existe.';
         RETURN;
     END IF;
 
-    SELECT o.id_obligacion, o.nombre_obligacion, o.monto_fijo_mensual, o.dia, s.nombre_subcategoria
+    SELECT o.id_obligacion, 
+    o.nombre_obligacion, 
+    o.monto_fijo_mensual, 
+    o.dia, 
+    s.nombre_subcategoria
     FROM dba.obligacion_fija o INNER JOIN dba.SubCategoria s 
     ON o.id_subcategoria = s.id_subcategoria
-    WHERE o.id_usuario = p_id_usuario AND o.vigente = p_activo
+    WHERE o.id_usuario = p_id_usuario 
+    AND o.vigente = p_activo
 
 END; 

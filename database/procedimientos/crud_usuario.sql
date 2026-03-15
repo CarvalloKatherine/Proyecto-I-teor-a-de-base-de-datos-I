@@ -54,7 +54,7 @@ p_modificado_por varchar(200)
 )
 BEGIN 
 
-    IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id AND estado = 1) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.Usuario WHERE id_usuario = p_id AND estado = 1) THEN
         RAISERROR 99003 'usuario no existe';
         RETURN; 
     END IF;
@@ -72,7 +72,7 @@ END;
 -----------------------------------------
 CREATE OR REPLACE PROCEDURE sp_eliminar_usuario(p_id int, p_modificado_por varchar(200))
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id AND estado = 1) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.Usuario WHERE id_usuario = p_id AND estado = 1) THEN
         RAISERROR 99003 'usuario no existe';
         RETURN; 
     END IF;
@@ -88,15 +88,38 @@ END;
 ------------------------------------
 CREATE OR REPLACE PROCEDURE sp_consultar_usuario(p_id int)
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.Usuario WHERE id_usuario = p_id) THEN
         RAISERROR 99003 'usuario no existe';
         RETURN; 
     END IF;
-    SELECT * FROM dba.Usuario WHERE id_usuario = p_id;
+    SELECT id_usuario,
+    clave,
+    primer_nombre,
+    segundo_nombre
+    primer_apellido,
+    segundo_apellido,
+    correo_electronico, 
+    fecha_registro,
+    salario_mensual_base,
+    estado,
+    creado_por,
+    creado_en
+    FROM dba.Usuario WHERE id_usuario = p_id;
     
 END;
 ---------------------------------
 CREATE OR REPLACE PROCEDURE sp_listar_usuarios()
 BEGIN 
-    SELECT * FROM dba.Usuario; 
+    SELECT id_usuario,
+    clave,
+    primer_nombre,
+    segundo_nombre
+    primer_apellido,
+    segundo_apellido,
+    correo_electronico, 
+    fecha_registro,
+    salario_mensual_base,
+    estado,
+    creado_por 
+    FROM dba.Usuario; 
 END; 

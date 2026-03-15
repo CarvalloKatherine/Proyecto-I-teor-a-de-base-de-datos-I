@@ -7,7 +7,7 @@ CREATE OR REPLACE PROCEDURE sp_insertar_subcategoria(
 )
 BEGIN
     
-    IF NOT EXISTS (SELECT * FROM dba.Categoria WHERE id_categoria = p_id_categoria) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.Categoria WHERE id_categoria = p_id_categoria) THEN
         RAISERROR 99005 'la categoría seleccionada no existe.';
         RETURN; 
     END IF;
@@ -38,7 +38,7 @@ p_descripcion VARCHAR(300),
 p_modificado_por VARCHAR(200)
 )
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.SubCategoria 
+    IF NOT EXISTS (SELECT 1 FROM dba.SubCategoria 
     WHERE id_subcategoria = p_id_subcategoria AND estado_sub = 1) THEN
         RAISERROR 99003 'subcategoria no existe';
         RETURN; 
@@ -57,17 +57,17 @@ END;
 ---------------------
 CREATE OR REPLACE PROCEDURE sp_eliminar_subcategoria(p_id_subcategoria INT)
 BEGIN 
-    IF NOT EXISTS (SELECT * FROM dba.SubCategoria WHERE id_subcategoria = p_id_subcategoria) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.SubCategoria WHERE id_subcategoria = p_id_subcategoria) THEN
         RAISERROR 99006 'La subcategoria no existe.';
         RETURN; 
     END IF;
 
-    IF EXISTS (SELECT * FROM dba.presupuesto_detalle WHERE id_subcategoria = p_id_subcategoria) THEN
+    IF EXISTS (SELECT 1 FROM dba.presupuesto_detalle WHERE id_subcategoria = p_id_subcategoria) THEN
         RAISERROR 99007 'No se puede eliminar, esta subcategoria ya esta asignada a un presupuesto.';
         RETURN;
     END IF;
 
-    IF EXISTS (SELECT * FROM dba.transaccion WHERE id_presupuesto_detalle IN (
+    IF EXISTS (SELECT 1 FROM dba.transaccion WHERE id_presupuesto_detalle IN (
         SELECT id_presupuesto_detalle FROM dba.presupuesto_detalle WHERE id_subcategoria = p_id_subcategoria
     )) THEN
         RAISERROR 99008 'No se puede eliminar ya existen transacciones registradas con esta subcategoria.';
@@ -83,7 +83,7 @@ END;
 ----------------------------------------
 CREATE OR REPLACE PROCEDURE sp_consultar_subcategoria(p_id_subcategoria int)
 BEGIN 
-    IF NOT EXISTS (SELECT * FROM dba.SubCategoria WHERE id_subcategoria = p_id_subcategoria) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.SubCategoria WHERE id_subcategoria = p_id_subcategoria) THEN
         RAISERROR 99006 'La subcategoria no existe.';
         RETURN; 
     END IF;
@@ -106,12 +106,20 @@ END;
 ------------------------------
 CREATE OR REPLACE PROCEDURE sp_listar_subcategorias_por_categoria(p_id_categoria INT)
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.Categoria WHERE id_categoria = p_id_categoria) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.Categoria WHERE id_categoria = p_id_categoria) THEN
         RAISERROR 99006 'La categoria no existe.';
         RETURN; 
     END IF;
 
-    Select * from dba.SubCategoria
+    Select id_subcategoria,
+    id_categoria, 
+    nombre_subcategoria,
+    descripcion_detallada_sub,
+    estado_sub,
+    por_defecto,
+    creado_por,
+    creado_en 
+    from dba.SubCategoria
     WHERE id_categoria = p_id_categoria
 
 END; 

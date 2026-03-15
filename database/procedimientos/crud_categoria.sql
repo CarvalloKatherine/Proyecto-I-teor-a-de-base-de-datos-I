@@ -34,7 +34,7 @@ p_color_hex varchar(30),
 p_modificado_por varchar(200))
 BEGIN 
 
-IF NOT EXISTS (SELECT * FROM dba.Categoria WHERE id_categoria = p_id_categoria ) THEN
+IF NOT EXISTS (SELECT 1 FROM dba.Categoria WHERE id_categoria = p_id_categoria ) THEN
         RAISERROR 99003 'categoria no existe';
         RETURN; 
     END IF;
@@ -52,12 +52,12 @@ END;
 
 CREATE OR REPLACE PROCEDURE sp_eliminar_categoria(p_id_categoria int)
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.Categoria WHERE id_categoria = p_id_categoria ) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.Categoria WHERE id_categoria = p_id_categoria ) THEN
         RAISERROR 99003 'Categoria no existe';
         RETURN; 
     END IF;
 
-    IF EXISTS (SELECT * FROM dba.SubCategoria 
+    IF EXISTS (SELECT 1 FROM dba.SubCategoria 
                WHERE id_categoria = p_id_categoria 
                AND por_defecto = 0 
                AND estado_sub = 1) THEN
@@ -77,23 +77,42 @@ END;
 CREATE OR REPLACE PROCEDURE sp_consultar_categoria(p_id_categoria int)
 BEGIN 
 
-    IF NOT EXISTS (SELECT * FROM dba.Categoria WHERE id_categoria = p_id_categoria) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.Categoria WHERE id_categoria = p_id_categoria) THEN
         RAISERROR 99003 'Categoria no existe';
         RETURN; 
     END IF;
 
-    SELECT * FROM dba.Categoria WHERE id_categoria = p_id_categoria;
+    SELECT id_categoria, 
+    nombre_categoria, 
+    descripcion_detallada, 
+    tipo_categoria,
+    nombre_icono,
+    color_hex,
+    orden_presentacion,
+    creado_por,
+    creado_en
+    FROM dba.Categoria WHERE id_categoria = p_id_categoria;
 END; 
 ------------------------------------------
 CREATE OR REPLACE PROCEDURE sp_listar_categorias(p_id_usuario int, 
 p_tipo varchar(30))
 BEGIN
-    IF NOT EXISTS (SELECT * FROM dba.Usuario WHERE id_usuario = p_id_usuario) THEN
+    IF NOT EXISTS (SELECT 1 FROM dba.Usuario WHERE id_usuario = p_id_usuario) THEN
         RAISERROR 99003 'usuario no existe';
         RETURN; 
     END IF;
 
-    SELECT * FROM dba.Categoria c 
+    SELECT 
+    c.id_categoria, 
+    c.nombre_categoria, 
+    c.descripcion_detallada, 
+    c.tipo_categoria,
+    c.nombre_icono,
+    c.color_hex,
+    c.orden_presentacion,
+    c.creado_por,
+    c.creado_en
+    FROM dba.Categoria c 
     INNER JOIN dba.SubCategoria sb  ON c.id_categoria = sb.id_categoria
     INNER JOIN dba.presupuesto_detalle pd ON sb.id_subcategoria = pd.id_subcategoria
     INNER JOIN dba.Presupuesto p ON pd.id_presupuesto = p.id_presupuesto
