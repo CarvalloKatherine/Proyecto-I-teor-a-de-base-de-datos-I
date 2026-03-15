@@ -32,7 +32,7 @@ BEGIN
 END;
 
 ------------------
-CREATE OR REPLACE PROCEDURE sp_actualizar_subcategoria(p_id_subcategoria, 
+CREATE OR REPLACE PROCEDURE sp_actualizar_subcategoria(p_id_subcategoria int, 
 p_nombre VARCHAR(30), 
 p_descripcion VARCHAR(300), 
 p_modificado_por VARCHAR(200)

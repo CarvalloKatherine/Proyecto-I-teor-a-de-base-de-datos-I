@@ -42,7 +42,7 @@ END;
 
 --------------------------
 
-CREATE OR REPLACE PROCEDURA sp_actualizar_presupuesto_detalle(p_id_detalle INT, 
+CREATE OR REPLACE PROCEDURE sp_actualizar_presupuesto_detalle(p_id_detalle INT, 
 p_monto_mensual NUMERIC(15,2), 
 p_observaciones VARCHAR(200), 
 p_modificado_por VARCHAR(200)

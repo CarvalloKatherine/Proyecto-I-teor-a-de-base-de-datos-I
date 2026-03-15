@@ -27,7 +27,7 @@ BEGIN
     COMMIT; 
 END; 
 ----------------------------
-CREATE OR REPLACE PROCEDURE sp_actualizar_categoria(p_id_categoria, 
+CREATE OR REPLACE PROCEDURE sp_actualizar_categoria(p_id_categoria int, 
 p_nombre varchar(30), 
 p_descripcion varchar(300), 
 p_color_hex varchar(30),

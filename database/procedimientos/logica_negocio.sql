@@ -149,7 +149,7 @@ BEGIN
     WHERE pd.id_presupuesto = p_id_presupuesto
     AND t.anio = p_anio 
     AND t.mes = p_mes 
-    AND tipo_transaccion = 'ahorro'
+    AND tipo_transaccion = 'ahorro';
 
     SET p_balance_final = p_total_ahorros-p_total_gastos - p_total_ingresos; 
 
@@ -181,9 +181,8 @@ p_mes int,
 OUT p_porcentaje NUMERIC(15,2)
 )
 BEGIN 
-DECLARE
-    v_monto_ejecutado NUMERIC(15,2);
-    v_monto_mensual_presupuestado NUMERIC(15,2);
+DECLARE v_monto_ejecutado NUMERIC(15,2);
+DECLARE v_monto_mensual_presupuestado NUMERIC(15,2);
 
 CALL sp_calcular_monto_ejecutado_mes(
 p_id_subcategoria, 
@@ -196,7 +195,7 @@ v_monto_ejecutado
 SELECT ISNULL(monto_mensual_asignado,0) INTO v_monto_mensual_presupuestado
 FROM dba.presupuesto_detalle 
 WHERE id_presupuesto = p_id_presupuesto
-AND id_subcategoria = p_id_subcategoria
+AND id_subcategoria = p_id_subcategoria;
 
 IF(v_monto_mensual_presupuestado > 0) THEN 
 SET p_porcentaje = (v_monto_ejecutado/v_monto_mensual_presupuestado)*100; 
@@ -214,12 +213,11 @@ p_modificado_por VARCHAR(200),
 p_id int
 )
 BEGIN 
-    DECLARE 
-    v_fecha_fin date; 
-    v_ingresos NUMERIC(15,2);
-    v_gastos NUMERIC(15,2);
-    v_ahorros NUMERIC(15,2);
-    v_balance NUMERIC(15,2);
+    DECLARE v_fecha_fin date; 
+    DECLARE v_ingresos NUMERIC(15,2);
+    DECLARE v_gastos NUMERIC(15,2);
+    DECLARE v_ahorros NUMERIC(15,2);
+    DECLARE v_balance NUMERIC(15,2);
 
     select fecha_fin into v_fecha_fin 
     from dba.presupuesto WHERE id_presupuesto = p_id_presupuesto 

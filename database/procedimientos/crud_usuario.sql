@@ -65,7 +65,7 @@ BEGIN
     segundo_apellido = p_segundo_apellido,
     salario_mensual_base = p_salario_mensual,
     modificado_por = p_modificado_por,
-    modificado_en = CURRENT TIMESTAMP,
+    modificado_en = CURRENT TIMESTAMP
     WHERE id_usuario = p_id;
     COMMIT; 
 END;

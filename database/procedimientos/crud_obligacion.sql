@@ -84,7 +84,7 @@ BEGIN
         dia = p_dia_vencimiento,
         fecha_fin = p_fecha_fin,
         vigente = p_vigente,
-        modificado_por = p_modificado_por,
+        modificado_por = p_modificado_por
     WHERE id_obligacion = p_id_obligacion;
 
     COMMIT; 
