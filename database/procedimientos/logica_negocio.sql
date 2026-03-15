@@ -9,22 +9,56 @@ p_lista_subcategorias_json,
 p_creado_por)
 */
 
-/*CREATE OR REPLACE PROCEDURE sp_registrar_transaccion_completa(
-p_id_usuario, 
-p_id_detalle, 
-p_anio, 
-p_mes, 
-p_id_subcategoria, 
-p_tipo, 
-p_descripcion, 
-p_monto, 
-p_fecha, 
-p_metodo_pago, 
-p_creado_por)
+CREATE OR REPLACE PROCEDURE sp_registrar_transaccion_completa(
+p_id_usuario int, 
+p_id_detalle int, 
+p_anio int, 
+p_mes int, 
+p_id_subcategoria int, 
+p_tipo varchar(30), 
+p_descripcion varchar (100), 
+p_monto numeric(15,2), 
+p_fecha date, 
+p_metodo_pago varchar(50), 
+p_num_factura int, 
+p_observaciones varchar(100), 
+p_creado_por varchar(200),
+p_id_obligacion INT
+)
 BEGIN 
+DECLARE v_fecha_inicio DATE;
+DECLARE v_fecha_fin DATE;
 
-END; */
+IF (p_mes < 1 OR p_mes > 12) THEN
+RAISERROR 99001 'El mes debe estar entre 1 y 12.';
+RETURN;
+END IF;
 
+SELECT fecha_inicio, fecha_fin 
+INTO v_fecha_inicio, v_fecha_fin
+FROM dba.presupuesto_detalle
+WHERE id_presupuesto_detalle = p_id_detalle;
+
+IF (v_fecha_inicio IS NULL) THEN
+RAISERROR 99045 'El detalle de presupuesto no existe.';
+RETURN;
+END IF;
+
+IF (p_fecha < v_fecha_inicio OR p_fecha > v_fecha_fin) THEN
+RAISERROR 99003 'La fecha de la transacción está fuera del período del presupuesto.';
+RETURN;
+END IF;
+
+CALL dba.sp_insertar_transaccion(
+p_id_detalle, 
+p_anio, p_mes, p_tipo, 
+p_descripcion, 
+p_monto, p_fecha, 
+p_metodo_pago, p_num_factura,p_observaciones, 
+p_creado_por, p_id_obligacion);
+
+END; 
+---------
 CREATE OR REPLACE PROCEDURE sp_procesar_obligaciones_mes(
 p_id_usuario INT, 
 p_anio INT, 
