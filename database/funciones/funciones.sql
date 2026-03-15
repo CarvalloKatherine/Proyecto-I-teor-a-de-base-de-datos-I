@@ -176,14 +176,35 @@ DECLARE v_id_categoria INT;
 END; 
 
 --9 
-CREATE OR REPLACE FUNCTION fn_calcular_proyeccion_gasto_mensual(id_subcategoria int, 
-anio int, 
-mes int
+CREATE OR REPLACE FUNCTION fn_calcular_proyeccion_gasto_mensual(p_id_subcategoria int, 
+p_anio int, 
+p_mes int,
+p_dias_totales int
 )
-returns 
+returns NUMERIC(15,2)
 BEGIN 
-DECLARE
-RETURN
+DECLARE v_gasto_total NUMERIC(15,2);
+DECLARE v_proyeccion NUMERIC(15,2); 
+DECLARE v_dias_transcurridos int; 
+
+SET v_dias_transcurridos = DAY(CURRENT DATE);
+
+SELECT SUM(monto) INTO V_gasto_total
+FROM dba.transaccion
+WHERE id_subcategoria = p_id_subcategoria
+AND YEAR(fecha) = p_anio
+AND MONTH(fecha) = p_mes;
+
+if(v_gasto_total IS NULL) THEN 
+set v_gasto_total = 0; 
+END IF; 
+
+if (p_dias_totales > 0)THEN 
+SET v_proyeccion = (v_gasto_total/v_dias_transcurridos)*p_dias_totales; 
+else SET v_proyeccion = 0; 
+end if; 
+
+RETURN v_proyeccion; 
 END; 
 
 
