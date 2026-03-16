@@ -151,7 +151,7 @@ BEGIN
     AND t.mes = p_mes 
     AND tipo_transaccion = 'ahorro';
 
-    SET p_balance_final = p_total_ahorros-p_total_gastos - p_total_ingresos; 
+    SET p_balance_final = p_total_ingresos - p_total_ahorros-p_total_gastos ; 
 
 END; 
 ------------
