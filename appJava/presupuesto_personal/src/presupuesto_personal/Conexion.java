@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class Conexion {
 
-    public Connection conexion() {
+    public static Connection getConexion() {
 
         String url = "jdbc:sqlanywhere:DBF=C:\\Users\\Lenovo\\Desktop\\TeoriaBDatosI\\database\\DDL\\miproyecto.db;uid=dba;pwd=sql";
 

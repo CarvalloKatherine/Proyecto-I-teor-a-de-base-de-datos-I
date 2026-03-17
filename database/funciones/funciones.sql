@@ -175,7 +175,7 @@ DECLARE v_id_categoria INT;
     return v_id_categoria; 
 END; 
 
---9 
+--9 (corregir)
 CREATE OR REPLACE FUNCTION fn_calcular_proyeccion_gasto_mensual(p_id_subcategoria int, 
 p_anio int, 
 p_mes int,
