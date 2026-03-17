@@ -141,7 +141,7 @@ private void iniciarSesion(){
     if (usuario != null) {
         JOptionPane.showMessageDialog(this, "¡Bienvenid@ " + usuario.getPrimerNombre() + "!");
         
-        // abrir menu principal
+        new configuracionInicial().setVisible(true);
         this.dispose(); 
     } else {
         JOptionPane.showMessageDialog(this, "Correo o contraseña incorrectos.", "Error de Acceso", JOptionPane.ERROR_MESSAGE);
