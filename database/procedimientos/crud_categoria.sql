@@ -121,3 +121,15 @@ BEGIN
     c.tipo_categoria = p_tipo; 
   
 END; 
+-----
+CREATE OR REPLACE PROCEDURE dba.sp_listar_categorias_catalogo()
+BEGIN
+    SELECT 
+        id_categoria, 
+        nombre_categoria, 
+        tipo_categoria,
+        color_hex,
+        orden_presentacion
+    FROM dba.Categoria
+    
+END;

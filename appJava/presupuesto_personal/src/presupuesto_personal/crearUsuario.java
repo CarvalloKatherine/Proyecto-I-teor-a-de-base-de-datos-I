@@ -17,7 +17,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 public class crearUsuario extends JFrame{
-    public JPanel panel; //crear panel como atributo 
+    public JPanel panel; 
     JFrame currentFrame = this; 
     private JPanel panelBotones;
     private JTextField txtP_Nombre, txtS_Nombre, txtP_Apellido, txtS_Apellido, txtCorreo, txtSalario;
@@ -31,7 +31,6 @@ public class crearUsuario extends JFrame{
   //setBounds(250,100,712,506);//une setsize y location, primero location y luego size, ancho/alto
   setLocationRelativeTo(null);      //pone la pantalla centrada
   setDefaultCloseOperation(EXIT_ON_CLOSE);//cerrar el programa con el boton
-  //this.setContentPane(fondo);
   iniciarComponentes();
   }  
   
@@ -48,7 +47,6 @@ public class crearUsuario extends JFrame{
       panel.setOpaque(false);
       //fondo.add(panel);
       panel.setBackground(Color.PINK);//color del panel 
-      //panel.getContentPane().setBackground(new Color(0xEBB8DD)); HEX COLRS 
       
       JLabel etiqueta = new JLabel("Crear cuenta");
       panel.add(etiqueta);//agregar etiqueta al panel

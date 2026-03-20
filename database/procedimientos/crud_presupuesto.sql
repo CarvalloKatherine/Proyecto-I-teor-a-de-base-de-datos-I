@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE dba.sp_insertar_presupuesto(
     p_ingreso_total numeric(15,2),
     p_gasto_total numeric(15,2),
     p_ahorro_total numeric(15,2),
-    p_creado_por varchar(200)
+    p_creado_por varchar(200),
+    OUT p_id_generado int
 )
 BEGIN
     DECLARE v_existe_activo int;
@@ -73,6 +74,8 @@ BEGIN
         CURRENT TIMESTAMP, 
         p_creado_por
     );
+
+    SET p_id_generado = @@IDENTITY; 
 
     COMMIT;
 END;
