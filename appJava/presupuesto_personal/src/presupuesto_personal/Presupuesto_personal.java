@@ -8,6 +8,9 @@ public class Presupuesto_personal {
      inicio in = new inicio(); 
      in.setVisible(true);
      
+     /*panelTransacciones pt = new panelTransacciones();
+     pt.setVisible(true);*/
+     
     }
     
 }

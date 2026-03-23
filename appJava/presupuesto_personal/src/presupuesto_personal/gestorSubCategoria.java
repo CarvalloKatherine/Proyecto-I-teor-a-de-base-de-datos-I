@@ -67,4 +67,31 @@ public class gestorSubCategoria {
         return lista;
     }
     
+    public List<SubCategoria> listarSubcategorias(int id) {
+        List<SubCategoria> lista = new ArrayList<>();
+        String sql = "{ call dba.sp_listar_subcategorias_presupuesto(?) }";
+        
+        
+        try (Connection con = Conexion.getConexion(); 
+             CallableStatement cs = con.prepareCall(sql)) {
+
+            if (con == null) return lista;
+            cs.setInt(1, id);
+            try (ResultSet rs = cs.executeQuery()) {
+                while (rs.next()) {
+                    
+                    SubCategoria sc = new SubCategoria();
+                    sc.setId_subcategoria(rs.getInt("id_subcategoria"));
+                    sc.setId_categoria(rs.getInt("id_categoria"));                    
+                    sc.setNombre_subcategoria(rs.getString("nombre_subcategoria"));
+                    sc.setTipo_categoria(rs.getString("tipo_categoria"));
+                    lista.add(sc);
+                }
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return lista;
+    }
+    
 }

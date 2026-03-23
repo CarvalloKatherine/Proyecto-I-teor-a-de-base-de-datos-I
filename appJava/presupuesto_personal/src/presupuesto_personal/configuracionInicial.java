@@ -226,6 +226,7 @@ public class configuracionInicial extends JFrame {
             p.setCreado_por(usuarioActivo.getCorreo());
 
             int idPresupuesto = gPres.registrarPresupuesto(p);
+            
 
             if (idPresupuesto > 0) {
                 for (JPanel tarjeta : tarjetasActivas.values()) {
@@ -246,7 +247,7 @@ public class configuracionInicial extends JFrame {
                     }
                 }
                 JOptionPane.showMessageDialog(this, "¡Presupuesto guardado correctamente!");
-                new panelTransacciones().setVisible(true);
+                new panelTransacciones(this.usuarioActivo, idPresupuesto).setVisible(true);
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "No se pudo generar el presupuesto.");
@@ -255,6 +256,7 @@ public class configuracionInicial extends JFrame {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "ingresa solo números válidos en los montos.");
         } catch (Exception ex) {
+            ex.printStackTrace(); 
             JOptionPane.showMessageDialog(this, "Error inesperado: " + ex.getMessage());
         }
     }

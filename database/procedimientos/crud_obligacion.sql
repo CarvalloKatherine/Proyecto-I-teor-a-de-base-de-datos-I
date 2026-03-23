@@ -1,12 +1,12 @@
-CREATE OR REPLACE PROCEDURE sp_insertar_obligacion(
-p_id_subcategoria INT, 
-p_nombre VARCHAR(50), 
-p_descripcion VARCHAR(100), 
-p_monto NUMERIC(15,2), 
-p_dia_vencimiento INT, 
-p_fecha_inicio DATE, 
-p_fecha_fin DATE, 
-p_creado_por VARCHAR(200)
+CREATE OR REPLACE PROCEDURE dba.sp_insertar_obligacion(
+    p_id_subcategoria INT, 
+    p_nombre VARCHAR(50), 
+    p_descripcion VARCHAR(100), 
+    p_monto NUMERIC(15,2), 
+    p_dia_vencimiento INT, 
+    p_fecha_inicio DATE, 
+    p_fecha_fin DATE, 
+    p_creado_por VARCHAR(200)
 )
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM dba.SubCategoria WHERE id_subcategoria = p_id_subcategoria) THEN
@@ -23,39 +23,26 @@ BEGIN
         RETURN;
     END IF;
 
-    IF (p_fecha_fin IS NOT NULL AND p_fecha_fin <= p_fecha_inicio )THEN
+    IF (p_fecha_fin IS NOT NULL AND p_fecha_fin <= p_fecha_inicio) THEN
         RAISERROR 99033 'la fecha de fin debe ser luego a la fecha de inicio.';
         RETURN;
     END IF;
 
     IF (p_dia_vencimiento < 1 OR p_dia_vencimiento > 31) THEN
-        RAISERROR 99034 'El diaa de vencimiento debe estar entre 1 y 31';
+        RAISERROR 99034 'El dia de vencimiento debe estar entre 1 y 31';
         RETURN;
     END IF;
 
     INSERT INTO dba.obligacion_fija (
-        id_subcategoria,
-        nombre_obligacion,
-        descripcion,
-        monto_fijo_mensual,
-        dia,
-        fecha_inicio,
-        fecha_fin,
-        creado_por
-    )
-    VALUES (
-        p_id_subcategoria,
-        p_nombre,
-        p_descripcion,
-        p_monto,
-        p_dia_vencimiento,
-        p_fecha_inicio,
-        p_fecha_fin,
-        p_creado_por
+        id_subcategoria, nombre_obligacion, descripcion,
+        monto_fijo_mensual, dia, fecha_inicio, fecha_fin, creado_por
+    ) VALUES (
+        p_id_subcategoria, p_nombre, p_descripcion,
+        p_monto, p_dia_vencimiento, p_fecha_inicio, p_fecha_fin, p_creado_por
     );
-
-    COMMIT; 
-END; 
+    COMMIT;
+END;
+COMMIT;
 
 --------------
 
@@ -140,13 +127,10 @@ END;
 --------------
 
 CREATE OR REPLACE PROCEDURE sp_listar_obligaciones_usuario(
-p_id_usuario INT, 
+p_correo varchar(200), 
 p_activo bit)
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM dba.obligacion_fija WHERE id_obligacion = p_id_obligacion) THEN
-        RAISERROR 99035 'La obligación no existe.';
-        RETURN;
-    END IF;
+   
 
     SELECT o.id_obligacion, 
     o.nombre_obligacion, 
@@ -155,7 +139,7 @@ BEGIN
     s.nombre_subcategoria
     FROM dba.obligacion_fija o INNER JOIN dba.SubCategoria s 
     ON o.id_subcategoria = s.id_subcategoria
-    WHERE o.id_usuario = p_id_usuario 
+    WHERE o.creado_por = p_correo 
     AND o.vigente = p_activo
 
 END; 

@@ -8,7 +8,7 @@ public class gestorPresupuesto {
     
     
     public int registrarPresupuesto(Presupuesto p){
-        String sql = "{ call dba.sp_insertar_presupuesto(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?) }";
+        String sql = "{ call dba.sp_insertar_presupuesto(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
         
         try (Connection con = Conexion.getConexion(); 
              CallableStatement cs = con.prepareCall(sql)) {
@@ -31,8 +31,11 @@ public class gestorPresupuesto {
             return cs.getInt(11);
 
         } catch (SQLException ex) {
-            ex.getMessage();
+            System.out.println("Error al registrar presupuesto: " + ex.getMessage());
             return -1; 
         }
     }
+    
+    
+
 }

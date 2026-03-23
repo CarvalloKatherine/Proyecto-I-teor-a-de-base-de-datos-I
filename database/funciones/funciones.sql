@@ -175,7 +175,7 @@ DECLARE v_id_categoria INT;
     return v_id_categoria; 
 END; 
 
---9 (corregir)
+--9 
 CREATE OR REPLACE FUNCTION fn_calcular_proyeccion_gasto_mensual(p_id_subcategoria int, 
 p_anio int, 
 p_mes int,
@@ -191,9 +191,9 @@ SET v_dias_transcurridos = DAY(CURRENT DATE);
 
 SELECT SUM(monto) INTO V_gasto_total
 FROM dba.transaccion
-WHERE id_subcategoria = p_id_subcategoria
-AND YEAR(fecha) = p_anio
-AND MONTH(fecha) = p_mes;
+inner join dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+WHERE pd.id_subcategoria = p_id_subcategoria
+AND t.anio = p_anio AND t.mes = p_mes;
 
 if(v_gasto_total IS NULL) THEN 
 set v_gasto_total = 0; 

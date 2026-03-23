@@ -123,3 +123,18 @@ BEGIN
     WHERE id_categoria = p_id_categoria
 
 END; 
+---------------
+CREATE OR REPLACE PROCEDURE sp_listar_subcategorias_presupuesto(
+    p_id_presupuesto int
+)
+BEGIN 
+    Select s.id_subcategoria,
+    s.id_categoria, 
+    s.nombre_subcategoria,
+    c.tipo_categoria
+    from dba.SubCategoria s INNER JOIN dba.presupuesto_detalle pd 
+    ON s.id_subcategoria = pd.id_subcategoria
+    INNER JOIN dba.Categoria c 
+    ON s.id_categoria = c.id_categoria 
+    where pd.id_presupuesto = p_id_presupuesto;
+END; 

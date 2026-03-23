@@ -9,3 +9,23 @@ BEGIN
     AND clave = p_clave
     AND estado = 1;
 END;
+-------------
+CREATE OR REPLACE FUNCTION fn_obtener_id_detalle(
+    p_id_presupuesto  int,
+    p_id_subcategoria INT
+) RETURNS INT
+BEGIN
+    DECLARE v_id int;
+    SELECT id_presupuesto_detalle INTO v_id
+    FROM dba.presupuesto_detalle
+    WHERE id_presupuesto = p_id_presupuesto
+    AND id_subcategoria = p_id_subcategoria;
+    RETURN v_id;
+END;
+----------
+CREATE OR REPLACE FUNCTION fn_ultimo_id_obligacion()
+RETURNS INT
+BEGIN
+    RETURN @@IDENTITY;
+END;
+COMMIT;

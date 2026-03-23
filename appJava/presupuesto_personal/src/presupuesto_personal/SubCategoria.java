@@ -3,16 +3,17 @@ package presupuesto_personal;
 import java.sql.Date;
 
 public class SubCategoria {
-    int id_subcategoria;
-    int id_categoria;
-    String nombre_subcategoria;
-    String descripcion_detallada_sub;
-    boolean estado_sub;
-    boolean por_defecto;
-    String creado_por;
-    Date creado_en;
-    String modificado_por;
-    Date modificado_en;
+    private int id_subcategoria;
+    private int id_categoria;
+    private String nombre_subcategoria;
+    private String descripcion_detallada_sub;
+    private boolean estado_sub;
+    private boolean por_defecto;
+    private String creado_por;
+    private Date creado_en;
+    private String modificado_por;
+    private Date modificado_en;
+    private String tipo_categoria;
 
     public SubCategoria() {
     }
@@ -109,7 +110,18 @@ public class SubCategoria {
     public void setModificado_en(Date modificado_en) {
         this.modificado_en = modificado_en;
     }
+
+    public String getTipo_categoria() {
+        return tipo_categoria;
+    }
+
+    public void setTipo_categoria(String tipo_categoria) {
+        this.tipo_categoria = tipo_categoria;
+    }
     
     
-    
+    @Override
+    public String toString() {
+    return nombre_subcategoria + " (" + tipo_categoria + ")";
+}
 }

@@ -19,7 +19,7 @@ public class gestorPresupuestoDetalle {
             cs.setInt(2, pd.getId_subcategoria());
             cs.setDouble(3, pd.getMonto_mensual_asignado());
             cs.setString(4, pd.getObservaciones());
-            cs.setString(5, pd.getObservaciones());
+            cs.setString(5, pd.getCreado_por());
 
             cs.execute();
             return true;
@@ -29,4 +29,19 @@ public class gestorPresupuestoDetalle {
               return  false; 
         }
     }
+    
+    public int obtenerIdDetalle(int idPresupuesto, int idSubcategoria) {
+    String sql = "{ ? = call dba.fn_obtener_id_detalle(?, ?) }";
+    try (Connection con = Conexion.getConexion();
+         CallableStatement cs = con.prepareCall(sql)) {
+        cs.registerOutParameter(1, java.sql.Types.INTEGER); 
+        cs.setInt(2, idPresupuesto);
+        cs.setInt(3, idSubcategoria);
+        cs.execute();
+        return cs.getInt(1);
+
+    } catch (SQLException ex) {
+        System.out.println(ex.getMessage());
+        return -1;
+    }}
 }
