@@ -1,10 +1,8 @@
 package presupuesto_personal;
 
-import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
 import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,12 +13,10 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import com.itextpdf.text.Image;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 public class gestorReportes {
@@ -192,6 +188,78 @@ public class gestorReportes {
         
         documento.close();
         JOptionPane.showMessageDialog(null, "Reporte 3 guardado en el escritorio.");
+
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+    }
+}
+    
+    public void generarReporte2(int anio, int mes) {
+    String sql = "{ call dba.sp_reporte2(?, ?, ?) }";
+
+    try (Connection con = Conexion.getConexion();
+         CallableStatement cs = con.prepareCall(sql)) {
+
+        cs.setInt(1, idPresupuesto);
+        cs.setInt(2, anio);
+        cs.setInt(3, mes);
+
+        org.jfree.data.general.DefaultPieDataset dataset =
+            new org.jfree.data.general.DefaultPieDataset();
+        
+        List <String> nombreCats = new ArrayList<>();
+
+        try (java.sql.ResultSet rs = cs.executeQuery()) {
+            while (rs.next()) {
+                String cat   = rs.getString("nombre_categoria");
+                double monto = rs.getDouble("total_gastado");
+                dataset.setValue(cat, monto);
+                nombreCats.add(cat);
+            }
+        }
+        
+        JFreeChart grafico = ChartFactory.createPieChart(
+            "Distribución de Gastos por Categoría " + mes + "/" + anio,
+            dataset,
+            true,  
+            true,
+            false
+        );
+
+        // Estilo
+        org.jfree.chart.plot.PiePlot plot = (org.jfree.chart.plot.PiePlot) grafico.getPlot();
+        plot.setBackgroundPaint(java.awt.Color.WHITE);
+
+        java.awt.Color[] colores = {
+            new java.awt.Color(144, 238, 144),
+            new java.awt.Color(255, 215, 0),
+            new java.awt.Color(255, 80, 80),
+            new java.awt.Color(100, 149, 237),
+            new java.awt.Color(255, 165, 0)
+        };
+
+        int i = 0;
+        for (Object key : dataset.getKeys()) {
+            plot.setSectionPaint((Comparable) key, colores[i % colores.length]);
+            i++;
+
+        }
+
+        // PDF
+        Document documento = new Document(PageSize.A4.rotate());
+        PdfWriter.getInstance(documento, new FileOutputStream(
+            "C:/Users/Lenovo/Desktop/Reporte2_GastosCategoria.pdf"));
+        documento.open();
+
+
+        BufferedImage imagen = grafico.createBufferedImage(700, 450);
+        Image imgPdf = Image.getInstance(imagen, null);
+        imgPdf.setAlignment(Image.ALIGN_CENTER);
+        documento.add(imgPdf);
+
+        documento.close();
+        JOptionPane.showMessageDialog(null, "Reporte 2 guardado en el escritorio.");
 
     } catch (Exception ex) {
         ex.printStackTrace();

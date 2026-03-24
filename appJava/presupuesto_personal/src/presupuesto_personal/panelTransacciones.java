@@ -82,7 +82,10 @@ public class panelTransacciones extends JFrame {
         btnR2.setBounds(x2, y, ancho, alto);
         pnl.add(btnR2);
         btnR2.addActionListener(e -> {
-            // ESPACIO PARA ACCION REPORTE 2
+            gestorPresupuesto gPres = new gestorPresupuesto();
+            Presupuesto p = gPres.obtenerPresupuesto(idPresupuesto);
+            gestorReportes gen = new gestorReportes(idPresupuesto, usuarioActivo.getIdUsuario());
+            gen.generarReporte2(p.getAnio_inicio(), p.getMes_inicio());
         });
 
         y += espacioY;

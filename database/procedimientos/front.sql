@@ -32,7 +32,7 @@ COMMIT;
 
 ------
 --REPORTE 3 
-CREATE OR REPLACE PROCEDURE dba.sp_reporte3(
+CREATE OR REPLACE PROCEDURE sp_reporte3(
     p_id_presupuesto INT,
     p_anio INT,
     p_mes INT
@@ -53,3 +53,27 @@ BEGIN
     WHERE pd.id_presupuesto = p_id_presupuesto
     GROUP BY c.nombre_categoria, s.nombre_subcategoria, pd.monto_mensual_asignado
 END;
+
+-----------------------
+--REPORTE4
+CREATE OR REPLACE PROCEDURE sp_reporte2(
+    p_id_presupuesto INT,
+    p_anio INT,
+    p_mes INT
+)
+BEGIN 
+    SELECT c.nombre_categoria, 
+    ISNULL(SUM(t.monto), 0) AS total_gastado,
+    COUNT(t.id_transaccion) as transacciones,
+    FROM dba.presupuesto_detalle pd
+    INNER JOIN dba.subcategoria s ON pd.id_subcategoria = s.id_subcategoria
+    INNER JOIN dba.categoria c ON s.id_categoria = c.id_categoria
+    LEFT JOIN dba.transaccion t ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+    AND t.anio = p_anio
+    AND t.mes = p_mes
+    AND t.tipo_transaccion = 'gasto'
+    WHERE pd.id_presupuesto = p_id_presupuesto
+    AND c.tipo_categoria = 'gasto'
+    GROUP BY c.nombre_categoria
+END; 
+
