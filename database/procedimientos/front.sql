@@ -96,22 +96,34 @@ BEGIN
     GROUP BY c.nombre_categoria, t.anio, t.mes
 END;
 
-----------reporte 6 
-CREATE OR REPLACE PROCEDURE dba.sp_reporte6(
-    p_id_presupuesto INT
+-------------
+CREATE OR REPLACE PROCEDURE dba.sp_reporte5(
+    p_id_usuario INT,
+    p_anio INT,
+    p_mes INT
 )
 BEGIN
     SELECT 
-        s.nombre_subcategoria AS meta,
-        pd.monto_mensual_asignado AS objetivo_mensual,
-        ISNULL(SUM(t.monto), 0) AS acumulado,
-        (ISNULL(SUM(t.monto), 0) / NULLIF(pd.monto_mensual_asignado, 0)) * 100 AS porcentaje   --reemplaza/convierte
-    FROM dba.presupuesto_detalle pd
-    INNER JOIN dba.subcategoria s ON pd.id_subcategoria = s.id_subcategoria
+        o.nombre_obligacion,
+        c.nombre_categoria,
+        o.monto_fijo_mensual,
+        o.dia AS dia_vencimiento,
+        CASE WHEN t.id_transaccion IS NOT NULL THEN 'Pagada' ELSE 'Pendiente'
+        END AS estado_pago,
+        ISNULL(MAX(t.fecha), 'Sin pagos') AS ultimo_pago
+    FROM dba.obligacion o
+    INNER JOIN dba.subcategoria s ON o.id_subcategoria = s.id_subcategoria
     INNER JOIN dba.categoria c ON s.id_categoria = c.id_categoria
-    LEFT JOIN dba.transaccion t ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
-    AND t.tipo_transaccion = 'ahorro'
-    WHERE pd.id_presupuesto = p_id_presupuesto
-    AND c.tipo_categoria = 'ahorro'
-    GROUP BY s.nombre_subcategoria, pd.monto_mensual_asignado
+    LEFT JOIN dba.transaccion t 
+        ON t.id_obligacion = o.id_obligacion
+        AND t.anio = p_anio
+        AND t.mes = p_mes
+    WHERE o.id_usuario = p_id_usuario
+      AND o.vigente = 1
+    GROUP BY 
+        o.nombre_obligacion, 
+        c.nombre_categoria, 
+        o.monto_fijo_mensual,
+        o.dia,
+        t.id_transaccion;
 END;

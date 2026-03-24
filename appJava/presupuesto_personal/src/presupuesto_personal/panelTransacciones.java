@@ -110,19 +110,37 @@ public class panelTransacciones extends JFrame {
 
         y += espacioY;
 
-        JButton btnR5 = new JButton("5. Estado de Obligaciones Fijas");
+        /*JButton btnR5 = new JButton("5. Estado de Obligaciones Fijas");
         btnR5.setBounds(x1, y, ancho, alto);
         pnl.add(btnR5);
         btnR5.addActionListener(e -> {
             // ESPACIO PARA REPORTE 5
-        });
+        });*/
+        JButton btnR5 = new JButton("5. Estado de Obligaciones Fijas");
+        btnR5.setBounds(x2, y, ancho, alto);
+        pnl.add(btnR5);
+        btnR5.addActionListener(e -> {
+            JTextField txtMes = new JTextField();
+            JTextField txtAnio = new JTextField("2026");
 
-        JButton btnR6 = new JButton("6. Progreso de Metas de Ahorro");
-        btnR6.setBounds(x2, y, ancho, alto);
-        pnl.add(btnR6);
-        btnR6.addActionListener(e -> {
-            gestorReportes gen = new gestorReportes(idPresupuesto, usuarioActivo.getIdUsuario());
-            gen.generarReporte6();
+            Object[] campos = {
+                "Mes (1-12):", txtMes,
+                "Año:", txtAnio
+            };
+
+            int result = JOptionPane.showConfirmDialog(null, campos,
+                    "Reporte 5 - Obligaciones", JOptionPane.OK_CANCEL_OPTION);
+
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    int mes = Integer.parseInt(txtMes.getText().trim());
+                    int anio = Integer.parseInt(txtAnio.getText().trim());
+                    gestorReportes gen = new gestorReportes(idPresupuesto, usuarioActivo.getIdUsuario());
+                    gen.generarReporte5(anio, mes);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Ingresa valores numéricos válidos.");
+                }
+            }
         });
 
         // Estilo para todos los botones

@@ -322,82 +322,133 @@ public class gestorReportes {
         JOptionPane.showMessageDialog(null, ex.getMessage());
     }
 }
-    
-    
-    public void generarReporte6() {
-    String sql = "{ call dba.sp_reporte6(?) }";
+  
+    public void generarReporte5(int anio, int mes) {
+    String sql = "{ call dba.sp_reporte5(?, ?, ?) }";
 
     try (Connection con = Conexion.getConexion();
          CallableStatement cs = con.prepareCall(sql)) {
 
-        cs.setInt(1, idPresupuesto);
+        cs.setInt(1, idUsuario);
+        cs.setInt(2, anio);
+        cs.setInt(3, mes);
 
-        // Dataset 
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        List<String> nombres      = new ArrayList<>();
+        List<String> categorias   = new ArrayList<>();
+        List<Double> montos       = new ArrayList<>();
+        List<Integer> dias        = new ArrayList<>();
+        List<String> estados      = new ArrayList<>();
+        List<String> ultimosPagos = new ArrayList<>();
 
-        List<String> metas       = new ArrayList<>();
-        List<Double> porcentajes = new ArrayList<>();
+        int pagadas = 0, pendientes = 0;
 
         try (java.sql.ResultSet rs = cs.executeQuery()) {
             while (rs.next()) {
-                String meta      = rs.getString("meta");
-                double objetivo  = rs.getDouble("objetivo_mensual");
-                double acumulado = rs.getDouble("acumulado");
-                double pct       = rs.getDouble("porcentaje");
+                String estado = rs.getString("estado_pago");
+                nombres.add(rs.getString("nombre_obligacion"));
+                categorias.add(rs.getString("nombre_categoria"));
+                montos.add(rs.getDouble("monto_fijo_mensual"));
+                dias.add(rs.getInt("dia_vencimiento"));
+                estados.add(estado);
+                ultimosPagos.add(rs.getString("ultimo_pago"));
 
-                dataset.setValue(acumulado, "Acumulado",  meta);
-                dataset.setValue(objetivo,  "Objetivo",   meta);
-
-                metas.add(meta);
-                porcentajes.add(pct);
+                if (estado.equals("Pagada")) pagadas++;
+                else pendientes++;
             }
         }
 
-        JFreeChart grafico = ChartFactory.createBarChart(
-            "Progreso de Metas de Ahorro",
-            "Meta",
-            "Monto ",
-            dataset,
-            PlotOrientation.HORIZONTAL, 
-            true, true, false
+        // --- GRÁFICO DE PIE ---
+        org.jfree.data.general.DefaultPieDataset dataset =
+            new org.jfree.data.general.DefaultPieDataset();
+        if (pagadas > 0)    dataset.setValue("Pagadas (" + pagadas + ")",       pagadas);
+        if (pendientes > 0) dataset.setValue("Pendientes (" + pendientes + ")", pendientes);
+
+        JFreeChart grafico = ChartFactory.createPieChart(
+            "Estado de Obligaciones " + mes + "/" + anio,
+            dataset, true, true, false
         );
 
-        // Color 
-        org.jfree.chart.plot.CategoryPlot plot = grafico.getCategoryPlot();
-        org.jfree.chart.renderer.category.BarRenderer renderer =
-            new org.jfree.chart.renderer.category.BarRenderer() {
-                @Override
-                public java.awt.Paint getItemPaint(int row, int col) {
-                    if (row == 1) return new java.awt.Color(200, 200, 200); // objetivo gris
-                    double pct = porcentajes.get(col);
-                    if (pct >= 100)      return new java.awt.Color(144, 238, 144); // verde completado
-                    else if (pct >= 50)  return new java.awt.Color(255, 215, 0);   // amarillo en progreso
-                    else                 return new java.awt.Color(255, 80, 80);    // rojo bajo
-                }
-            };
-        plot.setRenderer(renderer);
+        org.jfree.chart.plot.PiePlot plot =
+            (org.jfree.chart.plot.PiePlot) grafico.getPlot();
+        plot.setSectionPaint("Pagadas (" + pagadas + ")",       new java.awt.Color(144, 238, 144)); // verde
+        plot.setSectionPaint("Pendientes (" + pendientes + ")", new java.awt.Color(255, 215, 0));   // amarillo
         plot.setBackgroundPaint(java.awt.Color.WHITE);
 
-        // PDF
+        // --- PDF ---
         Document documento = new Document(PageSize.A4.rotate());
         PdfWriter.getInstance(documento, new FileOutputStream(
-            "C:/Users/Lenovo/Desktop/TeoriaBDatosI/metabase/reporte6.pdf"));
+            "C:/Users/Lenovo/Desktop/TeoriaBDatosI/metabase/reporte5.pdf"));
         documento.open();
 
-        BufferedImage imagen = grafico.createBufferedImage(750, 400);
+        // Título
+        com.itextpdf.text.Font fuenteTitulo = new com.itextpdf.text.Font(
+            com.itextpdf.text.Font.FontFamily.HELVETICA, 16,
+            com.itextpdf.text.Font.BOLD);
+        com.itextpdf.text.Paragraph titulo = new com.itextpdf.text.Paragraph(
+            "Reporte 5: Estado de Obligaciones - " + mes + "/" + anio, fuenteTitulo);
+        titulo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+        titulo.setSpacingAfter(15);
+        documento.add(titulo);
+
+        // --- TABLA ---
+        com.itextpdf.text.pdf.PdfPTable tabla =
+            new com.itextpdf.text.pdf.PdfPTable(6);
+        tabla.setWidthPercentage(100);
+
+        // Encabezados
+        String[] encabezados = {"Obligación", "Categoría", "Monto", "Día Vence", "Estado", "Último Pago"};
+        for (String enc : encabezados) {
+            com.itextpdf.text.pdf.PdfPCell celda =
+                new com.itextpdf.text.pdf.PdfPCell(
+                    new com.itextpdf.text.Phrase(enc));
+            celda.setBackgroundColor(new com.itextpdf.text.BaseColor(180, 210, 230));
+            celda.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            tabla.addCell(celda);
+        }
+
+        // Filas
+        for (int i = 0; i < nombres.size(); i++) {
+            com.itextpdf.text.BaseColor color = estados.get(i).equals("Pagada")
+                ? new com.itextpdf.text.BaseColor(220, 255, 220)  // verde claro
+                : new com.itextpdf.text.BaseColor(255, 255, 200); // amarillo claro
+
+            String[] fila = {
+                nombres.get(i),
+                categorias.get(i),
+                "L. " + montos.get(i),
+                "Día " + dias.get(i),
+                estados.get(i),
+                ultimosPagos.get(i)
+            };
+
+            for (String valor : fila) {
+                com.itextpdf.text.pdf.PdfPCell celda =
+                    new com.itextpdf.text.pdf.PdfPCell(
+                        new com.itextpdf.text.Phrase(valor));
+                celda.setBackgroundColor(color);
+                celda.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                tabla.addCell(celda);
+            }
+        }
+        documento.add(tabla);
+
+        // Gráfico debajo de la tabla
+        documento.add(new com.itextpdf.text.Paragraph(" "));
+        BufferedImage imagen = grafico.createBufferedImage(500, 300);
         Image imgPdf = Image.getInstance(imagen, null);
         imgPdf.setAlignment(Image.ALIGN_CENTER);
         documento.add(imgPdf);
 
         documento.close();
-        JOptionPane.showMessageDialog(null, "Reporte 6 guardado ");
+        JOptionPane.showMessageDialog(null, "Reporte 5 guardado");
 
     } catch (Exception ex) {
         ex.printStackTrace();
         JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
     }
 }
-
+    
+   
 }
 
 
