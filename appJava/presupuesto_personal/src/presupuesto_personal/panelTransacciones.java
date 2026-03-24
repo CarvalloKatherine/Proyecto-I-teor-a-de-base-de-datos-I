@@ -110,12 +110,6 @@ public class panelTransacciones extends JFrame {
 
         y += espacioY;
 
-        /*JButton btnR5 = new JButton("5. Estado de Obligaciones Fijas");
-        btnR5.setBounds(x1, y, ancho, alto);
-        pnl.add(btnR5);
-        btnR5.addActionListener(e -> {
-            // ESPACIO PARA REPORTE 5
-        });*/
         JButton btnR5 = new JButton("5. Estado de Obligaciones Fijas");
         btnR5.setBounds(x2, y, ancho, alto);
         pnl.add(btnR5);
@@ -403,26 +397,80 @@ public class panelTransacciones extends JFrame {
 }
 
     private JPanel crearPanelPerfil() {
-        JPanel pnl = new JPanel();
-        pnl.setBackground(Color.WHITE);
-        pnl.setLayout(null);
+    JPanel pnl = new JPanel();
+    pnl.setBackground(Color.WHITE);
+    pnl.setLayout(null);
 
-        JLabel lblIcono = new JLabel("PERFIL", SwingConstants.CENTER);
-        lblIcono.setFont(new Font("Segoe UI", Font.PLAIN, 40));
-        lblIcono.setBounds(350, 40, 150, 150);
-        pnl.add(lblIcono);
+   
+    JLabel lblIcono = new JLabel("PERFIL", SwingConstants.CENTER);
+    lblIcono.setFont(new Font("Segoe UI", Font.PLAIN, 30));
+    lblIcono.setBounds(350, 40, 150, 150);
+    pnl.add(lblIcono);
 
-        JLabel lblNombre = new JLabel("Nombre: Katherine", SwingConstants.CENTER);
-        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        lblNombre.setBounds(250, 200, 350, 30);
-        pnl.add(lblNombre);
+    
+    JLabel lblNombre = new JLabel("Usuario: " + usuarioActivo.getPrimerNombre() + " " + usuarioActivo.getPrimerApellido(), SwingConstants.CENTER);
+    lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 18));
+    lblNombre.setBounds(250, 200, 350, 30);
+    pnl.add(lblNombre);
 
-        JButton btnEdit = new JButton("Modificar Datos");
-        btnEdit.setBounds(350, 260, 150, 30);
-        pnl.add(btnEdit);
+    
+    JLabel lblCorreo = new JLabel(usuarioActivo.getCorreo(), SwingConstants.CENTER);
+    lblCorreo.setFont(new Font("Segoe UI", Font.ITALIC, 14));
+    lblCorreo.setForeground(Color.GRAY);
+    lblCorreo.setBounds(250, 230, 350, 30);
+    pnl.add(lblCorreo);
 
-        return pnl;
+    JButton btnEdit = new JButton("Modificar Datos");
+    btnEdit.setBounds(350, 280, 150, 35);
+    btnEdit.setBackground(new Color(180, 210, 230));
+    pnl.add(btnEdit);
+
+    
+    btnEdit.addActionListener(e -> {
+        abrirDialogoEdicionPerfil(lblNombre);
+    });
+
+    return pnl;
+}
+    
+    private void abrirDialogoEdicionPerfil(JLabel lblNombreUI) {
+    JTextField txtNombre1 = new JTextField(usuarioActivo.getPrimerNombre());
+    JTextField txtNombre2 = new JTextField(usuarioActivo.getSegundoNombre());
+    JTextField txtApellido1 = new JTextField(usuarioActivo.getPrimerApellido());
+    JTextField txtApellido2 = new JTextField(usuarioActivo.getSegundoApellido());
+    JTextField txtSalario = new JTextField(String.valueOf(usuarioActivo.getSalario()));
+
+    Object[] formulario = {
+        "Primer Nombre:", txtNombre1,
+        "Segundo Nombre:", txtNombre2,
+        "Primer Apellido:", txtApellido1,
+        "Segundo Apellido:", txtApellido2,
+        "Salario Mensual:", txtSalario
+    };
+
+    int opcion = JOptionPane.showConfirmDialog(this, formulario, "Actualizar Perfil", JOptionPane.OK_CANCEL_OPTION);
+
+    if (opcion == JOptionPane.OK_OPTION) {
+        try {
+            usuarioActivo.setPrimerNombre(txtNombre1.getText());
+            usuarioActivo.setSegundoNombre(txtNombre2.getText());
+            usuarioActivo.setPrimerApellido(txtApellido1.getText());
+            usuarioActivo.setSegundoApellido(txtApellido2.getText());
+            usuarioActivo.setSalario(Double.parseDouble(txtSalario.getText()));
+            usuarioActivo.setModificadoPor(usuarioActivo.getPrimerNombre());
+
+            gestorUsuario gU = new gestorUsuario();
+            if (gU.updateUsuario(usuarioActivo)) {
+                JOptionPane.showMessageDialog(this, "Perfil actualizado con éxito.");
+                lblNombreUI.setText("Usuario: " + usuarioActivo.getPrimerNombre() + " " + usuarioActivo.getPrimerApellido());
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al actualizar en la base de datos.");
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "El salario debe ser un número válido.");
+        }
     }
+}
     
     private void cargarSubcategorias() {
         cbSubCat.removeAllItems();

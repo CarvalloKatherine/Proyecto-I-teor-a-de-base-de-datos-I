@@ -108,22 +108,23 @@ BEGIN
         c.nombre_categoria,
         o.monto_fijo_mensual,
         o.dia AS dia_vencimiento,
-        CASE WHEN t.id_transaccion IS NOT NULL THEN 'Pagada' ELSE 'Pendiente'
-        END AS estado_pago,
-        ISNULL(MAX(t.fecha), 'Sin pagos') AS ultimo_pago
-    FROM dba.obligacion o
+        CASE WHEN ot.id_transaccion IS NOT NULL THEN 'Pagada' ELSE 'Pendiente' END AS estado_pago,
+        MAX(t.fecha) AS ultimo_pago
+    FROM dba.obligacion_fija o
     INNER JOIN dba.subcategoria s ON o.id_subcategoria = s.id_subcategoria
     INNER JOIN dba.categoria c ON s.id_categoria = c.id_categoria
-    LEFT JOIN dba.transaccion t 
-        ON t.id_obligacion = o.id_obligacion
+    INNER JOIN dba.presupuesto_detalle pd ON pd.id_subcategoria = s.id_subcategoria
+    INNER JOIN dba.presupuesto p ON p.id_presupuesto = pd.id_presupuesto
+        AND p.id_usuario = p_id_usuario
+    LEFT JOIN dba.obligacion_transaccion ot ON ot.id_obligacion = o.id_obligacion
+    LEFT JOIN dba.transaccion t ON t.id_transaccion = ot.id_transaccion
         AND t.anio = p_anio
         AND t.mes = p_mes
-    WHERE o.id_usuario = p_id_usuario
-      AND o.vigente = 1
+    WHERE o.vigente = 1
     GROUP BY 
         o.nombre_obligacion, 
         c.nombre_categoria, 
         o.monto_fijo_mensual,
         o.dia,
-        t.id_transaccion;
+        ot.id_transaccion;
 END;
