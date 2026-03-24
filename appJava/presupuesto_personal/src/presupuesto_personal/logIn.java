@@ -139,14 +139,21 @@ private void iniciarSesion(){
     Usuario usuario = gestor.validarLogIn(correo, clave);
     
     if (usuario != null) {
-        JOptionPane.showMessageDialog(this, "¡Bienvenid@ " + usuario.getPrimerNombre() + "!");
-        
-        configuracionInicial ventanaConfig = new configuracionInicial(usuario); 
-        ventanaConfig.setVisible(true);
-        this.dispose(); 
+    JOptionPane.showMessageDialog(this, "¡Bienvenid@ " + usuario.getPrimerNombre() + "!");
+    
+    if ("admin".equals(usuario.getRol())) {
+        MenuAdmin menuAdmin = new MenuAdmin(usuario);
+        menuAdmin.setVisible(true);
     } else {
-        JOptionPane.showMessageDialog(this, "Correo o contraseña incorrectos.", "Error de Acceso", JOptionPane.ERROR_MESSAGE);
+        configuracionInicial ventanaConfig = new configuracionInicial(usuario);
+        ventanaConfig.setVisible(true);
     }
+    
+    this.dispose(); 
+    
+} else {
+    JOptionPane.showMessageDialog(this, "Correo o contraseña incorrectos.", "Error de Acceso", JOptionPane.ERROR_MESSAGE);
+}
     
 }
     

@@ -18,6 +18,7 @@ public class Usuario {
     private Date creadoEn;               
     private String modificadoPor;          
     private Date modificadoEn;
+    private String rol;
     
     public Usuario(){}
     
@@ -148,6 +149,14 @@ public class Usuario {
 
     public void setModificadoEn(Date modificadoEn) {
         this.modificadoEn = modificadoEn;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     

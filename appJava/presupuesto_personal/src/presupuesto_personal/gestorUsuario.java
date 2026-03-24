@@ -54,6 +54,12 @@ public class gestorUsuario {
                 usuarioLogueado.setPrimerApellido(rs.getString("primer_apellido"));
                 usuarioLogueado.setCorreo(rs.getString("correo_electronico"));
                 usuarioLogueado.setSalario(rs.getDouble("salario_mensual_base"));
+                
+                if (usuarioLogueado.getCorreo().equals("admin@sistema.com")) {
+                    usuarioLogueado.setRol("admin");
+                } else {
+                    usuarioLogueado.setRol("usuario");
+                }
             }
         }
     } catch (SQLException ex) {

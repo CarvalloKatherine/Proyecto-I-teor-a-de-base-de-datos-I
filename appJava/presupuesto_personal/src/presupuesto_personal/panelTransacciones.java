@@ -406,7 +406,6 @@ public class panelTransacciones extends JFrame {
         return pnl;
     }
     
-    
     private void cargarSubcategorias() {
         cbSubCat.removeAllItems();
         List<SubCategoria> lista = gsub.listarSubcategorias(idPresupuesto);
