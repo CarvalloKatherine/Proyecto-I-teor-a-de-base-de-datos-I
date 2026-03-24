@@ -104,7 +104,8 @@ public class panelTransacciones extends JFrame {
         btnR4.setBounds(x2, y, ancho, alto);
         pnl.add(btnR4);
         btnR4.addActionListener(e -> {
-            // ESPACIO PARA ACCION REPORTE 4
+            gestorReportes gen = new gestorReportes(idPresupuesto, usuarioActivo.getIdUsuario());
+            gen.generarReporte4();
         });
 
         y += espacioY;
@@ -113,14 +114,15 @@ public class panelTransacciones extends JFrame {
         btnR5.setBounds(x1, y, ancho, alto);
         pnl.add(btnR5);
         btnR5.addActionListener(e -> {
-            // ESPACIO PARA ACCION REPORTE 5
+            // ESPACIO PARA REPORTE 5
         });
 
         JButton btnR6 = new JButton("6. Progreso de Metas de Ahorro");
         btnR6.setBounds(x2, y, ancho, alto);
         pnl.add(btnR6);
         btnR6.addActionListener(e -> {
-            // ESPACIO PARA ACCION REPORTE 6
+            gestorReportes gen = new gestorReportes(idPresupuesto, usuarioActivo.getIdUsuario());
+            gen.generarReporte6();
         });
 
         // Estilo para todos los botones

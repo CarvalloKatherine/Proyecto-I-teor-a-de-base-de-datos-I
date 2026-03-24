@@ -43,11 +43,6 @@ public class gestorReportes {
             cs.registerOutParameter(6, java.sql.Types.DECIMAL);
             cs.registerOutParameter(7, java.sql.Types.DECIMAL);
             cs.registerOutParameter(8, java.sql.Types.DECIMAL);
-            
-            System.out.println("idUsuario: " + idUsuario);
-            System.out.println("idPresupuesto: " + idPresupuesto);
-            System.out.println("anio: " + anio);
-            System.out.println("mes: " + mes);
     
     //cambio el execute por se lee el select dl metodo
             //cs.execute();
@@ -65,11 +60,6 @@ public class gestorReportes {
             }
             }
 
-            
-            System.out.println("Ingresos: " + ingresos);
-            System.out.println("Gastos: "   + gastos);
-            System.out.println("Ahorros: "  + ahorros);
-            System.out.println("Balance: "  + balance);
             
             //se ponen los datos 
             DefaultCategoryDataset datos = new DefaultCategoryDataset(); 
@@ -178,7 +168,7 @@ public class gestorReportes {
         // pasarlo a pdf
         Document documento = new Document(PageSize.A4.rotate());
         PdfWriter.getInstance(documento, new FileOutputStream(
-            "C:/Users/Lenovo/Desktop/Reporte3_Cumplimiento.pdf"));
+            "C:/Users/Lenovo/Desktop/TeoriaBDatosI/metabase/reporte3.pdf"));
         documento.open();
         // crea imagen a grafico 
         BufferedImage imgGrafico = grafico.createBufferedImage(750, 380);
@@ -187,11 +177,11 @@ public class gestorReportes {
         documento.add(imgPdf);
         
         documento.close();
-        JOptionPane.showMessageDialog(null, "Reporte 3 guardado en el escritorio.");
+        JOptionPane.showMessageDialog(null, "Reporte 3 guardado ");
 
     } catch (Exception ex) {
         ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        JOptionPane.showMessageDialog(null, ex.getMessage());
     }
 }
     
@@ -249,7 +239,7 @@ public class gestorReportes {
         // PDF
         Document documento = new Document(PageSize.A4.rotate());
         PdfWriter.getInstance(documento, new FileOutputStream(
-            "C:/Users/Lenovo/Desktop/Reporte2_GastosCategoria.pdf"));
+            "C:/Users/Lenovo/Desktop/TeoriaBDatosI/metabase/reporte2.pdf"));
         documento.open();
 
 
@@ -260,6 +250,147 @@ public class gestorReportes {
 
         documento.close();
         JOptionPane.showMessageDialog(null, "Reporte 2 guardado en el escritorio.");
+
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+    }
+}
+    
+    public void generarReporte4() {
+    String sql = "{ call dba.sp_reporte4(?) }";
+
+    try (Connection con = Conexion.getConexion();
+         CallableStatement cs = con.prepareCall(sql)) {
+
+        cs.setInt(1, idPresupuesto);
+
+        
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        try (java.sql.ResultSet rs = cs.executeQuery()) {
+            while (rs.next()) {
+                String categoria = rs.getString("nombre_categoria");
+                int anio         = rs.getInt("anio");
+                int mes          = rs.getInt("mes");
+                double monto     = rs.getDouble("total_gastado");
+
+                dataset.setValue(monto, categoria, mes + "/" + anio);
+            }
+        }
+
+        JFreeChart grafico = ChartFactory.createLineChart(
+            "Tendencia de Gastos por Categoría",
+            "Período",
+            "Monto",
+            dataset,
+            PlotOrientation.VERTICAL,
+            true,  // leyenda
+            true,
+            false
+        );
+
+        // Estilo de lineas
+        org.jfree.chart.plot.CategoryPlot plot = grafico.getCategoryPlot();
+        org.jfree.chart.renderer.category.LineAndShapeRenderer renderer =
+            new org.jfree.chart.renderer.category.LineAndShapeRenderer();
+
+        // 
+        for (int i = 0; i < dataset.getRowCount(); i++) {
+            renderer.setSeriesStroke(i, new java.awt.BasicStroke(2.5f));
+            renderer.setSeriesShapesVisible(i, true); // puntos en cada uno 
+        }
+        plot.setRenderer(renderer);
+        plot.setBackgroundPaint(java.awt.Color.WHITE);
+
+        // PDF
+        Document documento = new Document(PageSize.A4.rotate());
+        PdfWriter.getInstance(documento, new FileOutputStream(
+            "C:/Users/Lenovo/Desktop/TeoriaBDatosI/metabase/reporte4.pdf"));
+        documento.open();
+
+        BufferedImage imagen = grafico.createBufferedImage(750, 420);
+        Image imgPdf = Image.getInstance(imagen, null);
+        imgPdf.setAlignment(Image.ALIGN_CENTER);
+        documento.add(imgPdf);
+
+        documento.close();
+        JOptionPane.showMessageDialog(null, "Reporte 4 guardado");
+
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(null, ex.getMessage());
+    }
+}
+    
+    
+    public void generarReporte6() {
+    String sql = "{ call dba.sp_reporte6(?) }";
+
+    try (Connection con = Conexion.getConexion();
+         CallableStatement cs = con.prepareCall(sql)) {
+
+        cs.setInt(1, idPresupuesto);
+
+        // Dataset 
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        List<String> metas       = new ArrayList<>();
+        List<Double> porcentajes = new ArrayList<>();
+
+        try (java.sql.ResultSet rs = cs.executeQuery()) {
+            while (rs.next()) {
+                String meta      = rs.getString("meta");
+                double objetivo  = rs.getDouble("objetivo_mensual");
+                double acumulado = rs.getDouble("acumulado");
+                double pct       = rs.getDouble("porcentaje");
+
+                dataset.setValue(acumulado, "Acumulado",  meta);
+                dataset.setValue(objetivo,  "Objetivo",   meta);
+
+                metas.add(meta);
+                porcentajes.add(pct);
+            }
+        }
+
+        JFreeChart grafico = ChartFactory.createBarChart(
+            "Progreso de Metas de Ahorro",
+            "Meta",
+            "Monto ",
+            dataset,
+            PlotOrientation.HORIZONTAL, 
+            true, true, false
+        );
+
+        // Color 
+        org.jfree.chart.plot.CategoryPlot plot = grafico.getCategoryPlot();
+        org.jfree.chart.renderer.category.BarRenderer renderer =
+            new org.jfree.chart.renderer.category.BarRenderer() {
+                @Override
+                public java.awt.Paint getItemPaint(int row, int col) {
+                    if (row == 1) return new java.awt.Color(200, 200, 200); // objetivo gris
+                    double pct = porcentajes.get(col);
+                    if (pct >= 100)      return new java.awt.Color(144, 238, 144); // verde completado
+                    else if (pct >= 50)  return new java.awt.Color(255, 215, 0);   // amarillo en progreso
+                    else                 return new java.awt.Color(255, 80, 80);    // rojo bajo
+                }
+            };
+        plot.setRenderer(renderer);
+        plot.setBackgroundPaint(java.awt.Color.WHITE);
+
+        // PDF
+        Document documento = new Document(PageSize.A4.rotate());
+        PdfWriter.getInstance(documento, new FileOutputStream(
+            "C:/Users/Lenovo/Desktop/TeoriaBDatosI/metabase/reporte6.pdf"));
+        documento.open();
+
+        BufferedImage imagen = grafico.createBufferedImage(750, 400);
+        Image imgPdf = Image.getInstance(imagen, null);
+        imgPdf.setAlignment(Image.ALIGN_CENTER);
+        documento.add(imgPdf);
+
+        documento.close();
+        JOptionPane.showMessageDialog(null, "Reporte 6 guardado ");
 
     } catch (Exception ex) {
         ex.printStackTrace();
