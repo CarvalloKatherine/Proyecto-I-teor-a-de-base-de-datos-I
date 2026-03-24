@@ -160,7 +160,7 @@ BEGIN
 
     SELECT id_presupuesto, 
     id_usuario,
-    nombre_presupuesto,
+    nombre_descriptivo,
     anio_inicio,
     mes_inicio,
     anio_fin,

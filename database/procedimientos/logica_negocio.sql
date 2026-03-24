@@ -72,7 +72,7 @@ BEGIN
     */
 
     
-    SELECT o.nombre_obligacion, o.monto, o.dia AS vencimiento from 
+    SELECT o.nombre_obligacion, o.monto_fijo_mensual, o.dia AS vencimiento from 
     dba.obligacion_fija o 
     INNER JOIN dba.SubCategoria sc ON o.id_subcategoria = sc.id_subcategoria
     INNER JOIN dba.presupuesto_detalle pd ON sc.id_subcategoria = pd.id_subcategoria
@@ -137,6 +137,12 @@ BEGIN
     AND tipo_transaccion = 'ahorro';
 
     SET p_balance_final = p_total_ingresos - p_total_ahorros-p_total_gastos ; 
+
+    --prueba
+    SELECT p_total_ingresos AS ingresos,
+           p_total_gastos   AS gastos,
+           p_total_ahorros  AS ahorros,
+           p_balance_final  AS balance;
 
 END; 
 ------------

@@ -54,7 +54,82 @@ public class panelTransacciones extends JFrame {
         pnl.setBackground(Color.WHITE);
         pnl.setLayout(null);
 
-       
+        JLabel lblInstruccion = new JLabel("Seleccione el reporte que desea exportar a PDF:");
+        lblInstruccion.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblInstruccion.setBounds(30, 20, 400, 25);
+        pnl.add(lblInstruccion);
+
+        
+        int x1 = 50, x2 = 450; 
+        int y = 70;
+        int ancho = 350, alto = 50;
+        int espacioY = 70;
+
+        // BOTONES DE REPORTES 
+        //REPORTE 1
+        JButton btnR1 = new JButton("1. Resumen Mensual ");
+        btnR1.setBounds(x1, y, ancho, alto);
+        pnl.add(btnR1);
+        btnR1.addActionListener(e -> {
+            gestorPresupuesto gPres = new gestorPresupuesto();
+            Presupuesto p = gPres.obtenerPresupuesto(idPresupuesto);
+            gestorReportes gen = new gestorReportes(idPresupuesto, usuarioActivo.getIdUsuario());
+            gen.generarReporte1(p.getAnio_inicio(), p.getMes_inicio());
+        });
+        
+
+        JButton btnR2 = new JButton("2. Distribución de Gastos por Categoría");
+        btnR2.setBounds(x2, y, ancho, alto);
+        pnl.add(btnR2);
+        btnR2.addActionListener(e -> {
+            // ESPACIO PARA ACCION REPORTE 2
+        });
+
+        y += espacioY;
+
+        JButton btnR3 = new JButton("3. Cumplimiento de Presupuesto");
+        btnR3.setBounds(x1, y, ancho, alto);
+        pnl.add(btnR3);
+        btnR3.addActionListener(e -> {
+            gestorPresupuesto gPres = new gestorPresupuesto();
+            Presupuesto p = gPres.obtenerPresupuesto(idPresupuesto);
+            gestorReportes gen = new gestorReportes(idPresupuesto, usuarioActivo.getIdUsuario());
+            gen.generarReporte3(p.getAnio_inicio(), p.getMes_inicio());
+        });
+
+        JButton btnR4 = new JButton("4. Tendencia de Gastos en el Tiempo");
+        btnR4.setBounds(x2, y, ancho, alto);
+        pnl.add(btnR4);
+        btnR4.addActionListener(e -> {
+            // ESPACIO PARA ACCION REPORTE 4
+        });
+
+        y += espacioY;
+
+        JButton btnR5 = new JButton("5. Estado de Obligaciones Fijas");
+        btnR5.setBounds(x1, y, ancho, alto);
+        pnl.add(btnR5);
+        btnR5.addActionListener(e -> {
+            // ESPACIO PARA ACCION REPORTE 5
+        });
+
+        JButton btnR6 = new JButton("6. Progreso de Metas de Ahorro");
+        btnR6.setBounds(x2, y, ancho, alto);
+        pnl.add(btnR6);
+        btnR6.addActionListener(e -> {
+            // ESPACIO PARA ACCION REPORTE 6
+        });
+
+        // Estilo para todos los botones
+        Component[] comps = pnl.getComponents();
+        for (Component c : comps) {
+            if (c instanceof JButton) {
+                c.setBackground(new Color(255, 182, 193)); 
+                c.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 13));
+                ((JButton) c).setFocusPainted(false);
+            }
+        }
+
         return pnl;
     }
 

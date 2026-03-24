@@ -97,13 +97,14 @@ END;
 --5
 CREATE OR REPLACE FUNCTION fn_obtener_total_ejecutado_categoria_mes(p_id_categoria INT, 
 p_anio INT, 
-p_mes INT
+p_mes INT,
+p_id_presupuesto int
 )
 RETURNS NUMERIC(15,2)
 BEGIN 
 DECLARE v_total_ejecutado NUMERIC(15,2); 
 
-select isnull(sum(t.monto),0) into v_totoal_ejecutado
+select isnull(sum(t.monto),0) into v_total_ejecutado
 from dba.transaccion t
 INNER JOIN dba.presupuesto_detalle pd ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
 INNER JOIN dba.subcategoria s ON pd.id_subcategoria = s.id_subcategoria

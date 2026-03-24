@@ -29,3 +29,27 @@ BEGIN
     RETURN @@IDENTITY;
 END;
 COMMIT;
+
+------
+--REPORTE 3 
+CREATE OR REPLACE PROCEDURE dba.sp_reporte3(
+    p_id_presupuesto INT,
+    p_anio INT,
+    p_mes INT
+)
+BEGIN
+    SELECT 
+        c.nombre_categoria,
+        s.nombre_subcategoria,
+        pd.monto_mensual_asignado AS presupuestado,
+        ISNULL(SUM(t.monto), 0) AS ejecutado,
+        (ISNULL(SUM(t.monto), 0) / pd.monto_mensual_asignado) * 100 AS porcentaje
+    FROM dba.presupuesto_detalle pd
+    INNER JOIN dba.subcategoria s ON pd.id_subcategoria = s.id_subcategoria
+    INNER JOIN dba.categoria c ON s.id_categoria = c.id_categoria
+    LEFT JOIN dba.transaccion t ON t.id_presupuesto_detalle = pd.id_presupuesto_detalle
+        AND t.anio = p_anio
+        AND t.mes = p_mes
+    WHERE pd.id_presupuesto = p_id_presupuesto
+    GROUP BY c.nombre_categoria, s.nombre_subcategoria, pd.monto_mensual_asignado
+END;

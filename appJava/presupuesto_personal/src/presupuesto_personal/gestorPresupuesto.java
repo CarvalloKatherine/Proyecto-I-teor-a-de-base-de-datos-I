@@ -2,6 +2,7 @@ package presupuesto_personal;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class gestorPresupuesto {
@@ -36,6 +37,27 @@ public class gestorPresupuesto {
         }
     }
     
-    
+      public Presupuesto obtenerPresupuesto(int idPresupuesto) {
+    String sql = "{ call dba.sp_consultar_presupuesto(?) }";
+    try (Connection con = Conexion.getConexion();
+         CallableStatement cs = con.prepareCall(sql)) {
+
+        cs.setInt(1, idPresupuesto);
+        try (ResultSet rs = cs.executeQuery()) {
+            if (rs.next()) {
+                Presupuesto p = new Presupuesto();
+                p.setMes_inicio(rs.getInt("mes_inicio"));
+                p.setAnio_inicio(rs.getInt("anio_inicio"));
+                p.setMes_fin(rs.getInt("mes_fin"));
+                p.setAnio_fin(rs.getInt("anio_fin"));
+                return p;
+            }
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return null;
+}
+  
 
 }
