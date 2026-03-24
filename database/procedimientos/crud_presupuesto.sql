@@ -202,3 +202,17 @@ BEGIN
     creado_por from dba.presupuesto WHERE
     id_usuario = p_usuario AND estado_presupuesto = p_estado; 
 END; 
+
+--------
+CREATE OR REPLACE PROCEDURE dba.sp_listar_Presupuestos_catalogo()
+BEGIN
+    SELECT 
+    id_presupuesto,
+    id_usuario,
+    nombre_descriptivo,
+    anio_inicio,
+    mes_inicio,
+    estado_presupuesto
+    FROM dba.presupuesto;
+    
+END;

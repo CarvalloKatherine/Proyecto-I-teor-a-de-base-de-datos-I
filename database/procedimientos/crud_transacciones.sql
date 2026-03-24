@@ -186,3 +186,13 @@ INNER JOIN dba.SubCategoria s ON pd.id_subcategoria = s.id_subcategoria
 WHERE pd.id_presupuesto = p_id_presupuesto;
     
 END; 
+-------
+CREATE OR REPLACE PROCEDURE dba.sp_listar_transaccion_catalogo()
+BEGIN
+    SELECT 
+        id_transaccion,
+        fecha,
+        monto, 
+        descripcion
+    FROM dba.transaccion;
+END;

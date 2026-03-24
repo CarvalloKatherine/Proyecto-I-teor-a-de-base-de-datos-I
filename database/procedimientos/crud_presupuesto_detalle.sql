@@ -150,3 +150,13 @@ BEGIN
     WHERE pd.id_presupuesto = p_id_presupuesto;
 
 END; 
+--------------
+CREATE OR REPLACE PROCEDURE dba.sp_listar_detalle_catalogo()
+BEGIN
+    SELECT 
+    id_presupuesto_detalle,
+    id_presupuesto,
+    id_subcategoria,
+    monto_mensual_asignado
+    FROM dba.presupuesto_detalle;
+END;

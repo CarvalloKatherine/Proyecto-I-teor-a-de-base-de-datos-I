@@ -143,3 +143,14 @@ BEGIN
     AND o.vigente = p_activo
 
 END; 
+
+--------
+CREATE OR REPLACE PROCEDURE dba.sp_listar_obligacion_catalogo()
+BEGIN
+    SELECT 
+    id_obligacion,
+    nombre_obligacion,
+    monto_fijo_mensual,
+    vigente
+    FROM dba.obligacion_fija;
+END;

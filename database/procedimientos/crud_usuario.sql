@@ -95,7 +95,7 @@ BEGIN
     SELECT id_usuario,
     clave,
     primer_nombre,
-    segundo_nombre
+    segundo_nombre,
     primer_apellido,
     segundo_apellido,
     correo_electronico, 
@@ -113,7 +113,7 @@ BEGIN
     SELECT id_usuario,
     clave,
     primer_nombre,
-    segundo_nombre
+    segundo_nombre,
     primer_apellido,
     segundo_apellido,
     correo_electronico, 

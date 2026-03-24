@@ -18,14 +18,14 @@ BEGIN
         nombre_subcategoria, 
         descripcion_detallada_sub, 
         por_defecto, 
-        creado_por, 
+        creado_por
     )
     VALUES (
         p_id_categoria, 
         p_nombre, 
         p_descripcion, 
         p_por_defecto,
-        p_creado_por, 
+        p_creado_por
     );
 
     COMMIT;
@@ -138,3 +138,13 @@ BEGIN
     ON s.id_categoria = c.id_categoria 
     where pd.id_presupuesto = p_id_presupuesto;
 END; 
+-------------
+CREATE OR REPLACE PROCEDURE dba.sp_listar_Subcategorias_catalogo()
+BEGIN
+    SELECT 
+        id_subcategoria,
+        id_categoria,
+        nombre_subcategoria
+    FROM dba.subcategoria;
+    
+END;
